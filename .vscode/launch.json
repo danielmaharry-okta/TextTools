@@ -10,9 +10,9 @@
          "request": "launch",
          "preLaunchTask": "build",
          // If you have changed target frameworks, make sure to update the program path.
-         "program": "${workspaceFolder}/src/NewCmdLineApp/bin/Debug/net7.0/NewCmdLineApp.dll",
+         "program": "${workspaceFolder}/src/TextTools/bin/Debug/net7.0/TextTools.dll",
          "args": [],
-         "cwd": "${workspaceFolder}/src/NewCmdLineApp",
+         "cwd": "${workspaceFolder}/src/TextTools",
          // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
          "console": "internalConsole",
          "stopAtEntry": false

@@ -8,7 +8,7 @@
          "args": [
             "build",
             "-v:normal",
-            "${workspaceFolder}/src/NewCmdLineApp/NewCmdLineApp.csproj",
+            "${workspaceFolder}/src/TextTools/TextTools.csproj",
             "/property:GenerateFullPaths=true",
             "/consoleloggerparameters:NoSummary"
          ],
@@ -23,7 +23,7 @@
             "publish",
             "-c:Release",
             "-o:${workspaceFolder}/finalexe",
-            "${workspaceFolder}/src/NewCmdLineApp/NewCmdLineApp.csproj"
+            "${workspaceFolder}/src/TextTools/TextTools.csproj"
          ],
          "problemMatcher": "$msCompile",
          "group": "build"
@@ -36,7 +36,7 @@
             "watch",
             "run",
             "--project",
-            "${workspaceFolder}/src/NewCmdLineApp/NewCmdLineApp.csproj"
+            "${workspaceFolder}/src/TextTools/TextTools.csproj"
          ],
          "problemMatcher": "$msCompile"
       },

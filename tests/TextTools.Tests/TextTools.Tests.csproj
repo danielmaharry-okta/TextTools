@@ -20,6 +20,6 @@
     <PackageReference Include="ReportGenerator" Version="5.1.10"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NewCmdLineApp\NewCmdLineApp.csproj"/>
+    <ProjectReference Include="..\..\src\TextTools\TextTools.csproj"/>
   </ItemGroup>
 </Project>

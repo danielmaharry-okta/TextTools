@@ -5,11 +5,11 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{802E3AE7-965C-455B-85E0-D49A903425C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewCmdLineApp", "src\NewCmdLineApp\NewCmdLineApp.csproj", "{3187822F-3590-44E1-98EE-92923540CFB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextTools", "src\TextTools\TextTools.csproj", "{3187822F-3590-44E1-98EE-92923540CFB4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AA45F813-238C-40A1-8739-616756F63D1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewCmdLineApp.Tests", "tests\NewCmdLineApp.Tests\NewCmdLineApp.Tests.csproj", "{FAA0278E-8CAA-4A9C-8026-A9AF7EA51FCD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextTools.Tests", "tests\TextTools.Tests\TextTools.Tests.csproj", "{FAA0278E-8CAA-4A9C-8026-A9AF7EA51FCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

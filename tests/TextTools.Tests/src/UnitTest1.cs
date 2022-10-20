@@ -1,4 +1,4 @@
-namespace NewCmdLineApp.Tests;
+namespace TextTools.Tests;
 
 public class UnitTest1
 {

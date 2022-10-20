@@ -1,4 +1,4 @@
-# NewCmdLineApp
+# TextTools
 
 This repository provides an easy template for creating a new github repo for a test-driven, C# .NET 7 commandline application. Go to [setup.md](SETUP.md) for instructions on how to get your project running once you have copied this template.
 
@@ -6,8 +6,8 @@ This template has the features listed below.
 
 ## Projects
 
-* NewCmdLineApp is a C# 11, .NET 7 command-line application project
-* NewCmdLineApp.Tests is a C# 11, .NET 7, xUnit test project, targetting NewCmdLineApp
+* TextTools is a C# 11, .NET 7 command-line application project
+* TextTools.Tests is a C# 11, .NET 7, xUnit test project, targetting TextTools
 
 ## Documentation
 
