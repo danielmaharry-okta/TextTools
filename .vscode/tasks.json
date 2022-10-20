@@ -1,0 +1,70 @@
+{
+   "version": "2.0.0",
+   "tasks": [
+      {
+         "label": "build",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+            "build",
+            "-v:normal",
+            "${workspaceFolder}/src/NewCmdLineApp/NewCmdLineApp.csproj",
+            "/property:GenerateFullPaths=true",
+            "/consoleloggerparameters:NoSummary"
+         ],
+         "problemMatcher": "$msCompile",
+         "group": "build"
+      },
+      {
+         "label": "publish final exe",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+            "publish",
+            "-c:Release",
+            "-o:${workspaceFolder}/finalexe",
+            "${workspaceFolder}/src/NewCmdLineApp/NewCmdLineApp.csproj"
+         ],
+         "problemMatcher": "$msCompile",
+         "group": "build"
+      },
+      {
+         "label": "watch",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+            "watch",
+            "run",
+            "--project",
+            "${workspaceFolder}/src/NewCmdLineApp/NewCmdLineApp.csproj"
+         ],
+         "problemMatcher": "$msCompile"
+      },
+      {
+         "label": "test",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+             "test",
+             "--results-directory:${workspaceFolder}\\coverage",
+             "--collect:\"XPlat Code Coverage\""
+         ],
+         "problemMatcher": "$msCompile",
+         "group": "test"
+     },
+     {
+         "label": "test report",
+         "dependsOn": "test",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+             "%userprofile%/.nuget/packages/reportgenerator/5.1.10/tools/net6.0/ReportGenerator.dll",
+             "-reports:${workspaceFolder}/coverage/*/coverage.cobertura.xml",
+             "-targetdir:${workspaceFolder}/coverage/report/",
+             "-reporttypes:HtmlSummary"
+         ],
+         "problemMatcher": "$msCompile",
+         "group": "test"
+     }
+   ]
+}
