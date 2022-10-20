@@ -1,19 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
-   <PropertyGroup>
-      <OutputType>Exe</OutputType>
-      <TargetFramework>net7.0</TargetFramework>
-      <ImplicitUsings>enable</ImplicitUsings>
-      <Nullable>enable</Nullable>
-      <Version>0.0.1</Version>
-      <GenerateDocumentationFile>true</GenerateDocumentationFile>
-      <DocumentationFile>..\..\docs\xml\TextTools.xml</DocumentationFile>
-      <IsTestProject>false</IsTestProject>
-      <PublishTrimmed>true</PublishTrimmed>
-      <PublishSingleFile>true</PublishSingleFile>
-   </PropertyGroup>
-   <ItemGroup>
-      <Using Remove="System.Net.Http" />
-      <Using Remove="System.Threading" />
-      <Using Remove="System.Threading.Tasks" />
-   </ItemGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>0.0.1</Version>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>..\..\docs\xml\TextTools.xml</DocumentationFile>
+    <IsTestProject>false</IsTestProject>
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishSingleFile>true</PublishSingleFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Using Remove="System.Net.Http"/>
+    <Using Remove="System.Threading"/>
+    <Using Remove="System.Threading.Tasks"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
+    <PackageReference Include="CsvHelper" Version="29.0.0"/>
+  </ItemGroup>
 </Project>
