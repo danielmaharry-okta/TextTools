@@ -35,13 +35,49 @@ namespace TextTools.CommandHandlers
 		protected override bool ValidateNonCoreOptions()
 		{
 			Console.WriteLine($"Text regex: {TextRegex.ToString()}");
-			return string.IsNullOrWhiteSpace(TextRegex.ToString());
+			return !string.IsNullOrWhiteSpace(TextRegex.ToString());
 		}
 
 		/// <inheritdoc />
 		protected override void BuildReport()
 		{
-			Console.WriteLine("MatchLine runs");
+			ReportFileName = "MatchList";
+			SendToConsole("Running MatchList Report", ConsoleColor.Red);
+
+			Worksheet matchlist = new Worksheet("matchlist");
+			matchlist.Rows.Add(new List<string> { "file", "match" });
+
+			foreach (var sourceFile in SourceDirectory.EnumerateFiles(FilePattern, RecurseDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
+			{
+				SendToConsole($"Pulling data from {sourceFile.Name}", ConsoleColor.Red);
+				ExtractData(matchlist, sourceFile);
+			}
+
+			Reports.Add(matchlist);
+
+			Worksheet counts = new Worksheet("matchcount");
+			counts.Rows.Add(new List<string> { "match", "count" });
+			// var groups = matchlist.Rows.GroupBy(row => row.Last()).Select(x => new
+			// {
+			// 	url = x.Key,
+			// 	count = x.Count()
+			// });
+
+			counts.Rows.AddRange(matchlist.Rows.GroupBy(row => row.Last())
+				.Select(x => new List<string> { x.Key, x.Count().ToString() }));
+
+			Reports.Add(counts);
+		}
+
+		private void ExtractData(Worksheet ws, FileInfo sourceFile)
+		{
+			foreach (var line in sourceFile.AsStringList())
+			{
+				foreach (Match match in TextRegex.Matches(line))
+				{
+					ws.Rows.Add(new List<string> { sourceFile.FullName, match.Value });
+				}
+			}
 		}
 	}
 }
