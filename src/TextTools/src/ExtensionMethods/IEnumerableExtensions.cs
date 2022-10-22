@@ -170,7 +170,7 @@
         /// <param name="current">The current item in <paramref name="items" /></param>
         /// <typeparam name="T">The type of the elements of <paramref name="items" /></typeparam>
         /// <returns>The next item after the current one in the list or default(T)</returns>
-        public static T ElementAfter<T>(this IEnumerable<T> items, T current)
+        public static T? ElementAfter<T>(this IEnumerable<T> items, T current)
         {
             if (current == null)
             {
@@ -192,7 +192,7 @@
         /// <param name="current">The current item in <paramref name="items" /></param>
         /// <typeparam name="T">The type of the elements of <paramref name="items" /></typeparam>
         /// <returns>The previous item before the current one in the list or default(T)</returns>
-        public static T ElementBefore<T>(this IEnumerable<T> items, T current)
+        public static T? ElementBefore<T>(this IEnumerable<T> items, T current)
         {
             if (current == null)
             {

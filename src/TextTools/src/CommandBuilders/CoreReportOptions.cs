@@ -17,12 +17,12 @@ namespace TextTools.Enums
 		/// Gets or sets a value indicating whether the command should look recursively through all subfolders of the source directory or not
 		/// </summary>
 		/// <value><c>true</c> to set recursive search. <c>false</c> to find files only in the one folder</value>
-		public bool RecurseDirectories { get; set; }
+		public bool RecurseDirectories { get; set; } = false;
 
 		/// <summary>
 		/// Gets or sets the file pattern for files to use within source directory.
 		/// </summary>
-		public string FilePattern { get; set; } = string.Empty;
+		public string FilePattern { get; set; } = "*.*";
 
 		/// <summary>
 		/// Gets or sets the output type for the result of the script. The default is a CSV file.
@@ -35,6 +35,9 @@ namespace TextTools.Enums
 		public DirectoryInfo OutputDirectory { get; set; } = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
 	}
 
+	/// <summary>
+	/// Binder class for parsing report command base options from the command line
+	/// </summary>
 	public class ReportCommandBaseOptionsBinder : BinderBase<ReportCommandBaseOptions>
 	{
 		private readonly Option<DirectoryInfo> _sourceDirectoryOption;
@@ -43,6 +46,14 @@ namespace TextTools.Enums
 		private readonly Option<ReportFileType> _outputTypeOption;
 		private readonly Option<DirectoryInfo> _outputDirectoryOption;
 
+		/// <summary>
+		/// Creates an instance of the <see cref="ReportCommandBaseOptionsBinder" /> class
+		/// </summary>
+		/// <param name="sourceDirectoryOption">The source directory option</param>
+		/// <param name="recurseDirectoriesOption">The recurse directories option</param>
+		/// <param name="filePatternOption">The file pattern option</param>
+		/// <param name="outputTypeOption">The output type option</param>
+		/// <param name="outputDirectoryOption">The output directory option</param>
 		public ReportCommandBaseOptionsBinder(
 			Option<DirectoryInfo> sourceDirectoryOption,
 			Option<bool> recurseDirectoriesOption,
@@ -58,14 +69,37 @@ namespace TextTools.Enums
 			_outputDirectoryOption = outputDirectoryOption;
 		}
 
-		protected override ReportCommandBaseOptions GetBoundValue(BindingContext bindingContext) =>
-			new ReportCommandBaseOptions
+		/// <summary>
+		/// Binds the Binder class to actual values for the ReportCommandBaseOptions class
+		/// </summary>
+		/// <param name="bindingContext">The binding context</param>
+		/// <returns>A new <see cref="ReportCommandBaseOptions" /> class</returns>
+		protected override ReportCommandBaseOptions GetBoundValue(BindingContext bindingContext)
+		{
+			var sourceDirectory = bindingContext.ParseResult.GetValueForOption<DirectoryInfo>(_sourceDirectoryOption);
+			var filePattern = bindingContext.ParseResult.GetValueForOption<string>(_filePatternOption);
+			var outputDirectory = bindingContext.ParseResult.GetValueForOption<DirectoryInfo>(_outputDirectoryOption);
+
+			var options = new ReportCommandBaseOptions();
+			if (sourceDirectory is not null)
 			{
-				SourceDirectory = bindingContext.ParseResult.GetValueForOption<DirectoryInfo>(_sourceDirectoryOption),
-				RecurseDirectories = bindingContext.ParseResult.GetValueForOption<bool>(_recurseDirectoriesOption),
-				FilePattern = bindingContext.ParseResult.GetValueForOption<string>(_filePatternOption),
-				OutputType = bindingContext.ParseResult.GetValueForOption<ReportFileType>(_outputTypeOption),
-				OutputDirectory = bindingContext.ParseResult.GetValueForOption<DirectoryInfo>(_outputDirectoryOption)
-			};
+				options.SourceDirectory = sourceDirectory;
+			}
+
+			if (outputDirectory is not null)
+			{
+				options.OutputDirectory = outputDirectory;
+			}
+
+			if (!string.IsNullOrWhiteSpace(filePattern))
+			{
+				options.FilePattern = filePattern;
+			}
+
+			options.RecurseDirectories = bindingContext.ParseResult.GetValueForOption<bool>(_recurseDirectoriesOption);
+			options.OutputType = bindingContext.ParseResult.GetValueForOption<ReportFileType>(_outputTypeOption);
+
+			return options;
+		}
 	}
 }

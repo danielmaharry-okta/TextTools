@@ -40,22 +40,22 @@ namespace TextTools.CommandHandlers
       /// </summary>
       protected DirectoryInfo SourceDirectory { get; set; } = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
 
-      /// <summary>
-      /// Gets or sets a value indicating whether the command should look recursively through all subfolders of the source directory or not
-      /// </summary>
-      /// <value><c>true</c> to set recursive search. <c>false</c> to find files only in the one folder</value>
-      protected bool RecurseDirectories { get; set; }
+		/// <summary>
+		/// Gets or sets a value indicating whether the command should look recursively through all subfolders of the source directory or not
+		/// </summary>
+		/// <value><c>true</c> to set recursive search. <c>false</c> to find files only in the one folder</value>
+		protected bool RecurseDirectories { get; set; } = false;
 
-      /// <summary>
-      /// Gets or sets the file pattern for files to use within source directory.
-      /// </summary>
-      protected string FilePattern { get; set; }
+		/// <summary>
+		/// Gets or sets the file pattern for files to use within source directory.
+		/// </summary>
+		protected string FilePattern { get; set; } = "*.txt";
 
-      /// <summary>
-      /// Gets or sets the type of file to save the report as
-      /// </summary>
-      /// <value>A value of the <see cref="ReportFileType" /> enum</value>
-      protected ReportFileType FileTypeToReturn { get; set; } = ReportFileType.Csv;
+		/// <summary>
+		/// Gets or sets the type of file to save the report as
+		/// </summary>
+		/// <value>A value of the <see cref="ReportFileType" /> enum</value>
+		protected ReportFileType FileTypeToReturn { get; set; } = ReportFileType.Csv;
 
       /// <summary>
       /// Gets or sets the directory to save the reports to
@@ -87,8 +87,9 @@ namespace TextTools.CommandHandlers
          Console.WriteLine($"File pattern : {FilePattern}");
          Console.WriteLine($"Check child directories : {RecurseDirectories}");
          Console.WriteLine($"Output file type : {FileTypeToReturn}");
-         var sourceFiles = SourceDirectory.EnumerateFiles(FilePattern, RecurseDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-         Console.WriteLine($"Source Directory : {SourceDirectory.FullName}, {sourceFiles.Count()} files");
+			Console.WriteLine($"Source Directory : {SourceDirectory.FullName}");
+			var sourceFiles = SourceDirectory.EnumerateFiles(FilePattern, RecurseDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+			Console.WriteLine($"Count of files : {sourceFiles.Count<FileInfo>()} files");
          Console.WriteLine($"Output Directory : {OutputDirectory.FullName}");
          return ValidateNonCoreOptions();
       }

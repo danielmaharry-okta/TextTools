@@ -13,6 +13,7 @@ namespace TextTools.CommandBuilders
       /// </summary>
       protected Option<DirectoryInfo> SourceDirectoryOption { get; } = new Option<DirectoryInfo>(
          new string[] { "-d", "--sourceDirectory" },
+         getDefaultValue: () => new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)),
          "Source directory"
       );
 
@@ -44,33 +45,27 @@ namespace TextTools.CommandBuilders
       ).ExistingOnly();
 
       /// <summary>
-      /// Returns an option to set a regex for the files in the source directory
+      /// Gets an option to set a regex for the files in the source directory
       /// </summary>
-      /// <param name="pattern">A default value for the file regex</param>
-      /// <returns>An option to set a regex for the files in the source directory</returns>
-      protected Option<string> FilePatternOption(string pattern)
-      {
-         return new Option<string>(
+      protected Option<string> FilePatternOption { get; } = new Option<string>(
             new string[] { "-f", "--filePattern" },
-            getDefaultValue: () => pattern,
-            $"File pattern for files to use within source directory. Default is {pattern}"
-         );
-      }
+            getDefaultValue: () => "*.txt",
+            $"File pattern for files to use within source directory. Default is *.txt"
+      );
 
       /// <summary>
       /// Adds the five core options for a report command - source directory, output type, recurse directory, file pattern, and output directory
       /// </summary>
       /// <param name="subCommand">The <see cref="System.CommandLine.Command" /> to add the options to.</param>
-      /// <param name="pattern">A file pattern <see cref="System.CommandLine.Option{T}" /></param>
-      protected ReportCommandBaseOptionsBinder CreateAndAddCoreReportCommandOptions(Command subCommand, string pattern)
+      protected ReportCommandBaseOptionsBinder CreateAndAddCoreReportCommandOptions(Command subCommand)
       {
          subCommand.AddOption(SourceDirectoryOption);
          subCommand.AddOption(OutputTypeOption);
          subCommand.AddOption(RecurseDirectoriesOption);
-         subCommand.AddOption(FilePatternOption(pattern));
+         subCommand.AddOption(FilePatternOption);
          subCommand.AddOption(OutputDirectoryOption);
 			return new ReportCommandBaseOptionsBinder(SourceDirectoryOption, RecurseDirectoriesOption,
-						FilePatternOption(pattern), OutputTypeOption, OutputDirectoryOption);
+						FilePatternOption, OutputTypeOption, OutputDirectoryOption);
       }
    }
 }
