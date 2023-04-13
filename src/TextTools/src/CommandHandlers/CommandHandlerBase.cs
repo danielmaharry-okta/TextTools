@@ -44,7 +44,6 @@ namespace TextTools.CommandHandlers
         protected void SendToConsole(string text, ConsoleColor color)
         {
             Console.ForegroundColor = color;
-            Console.WriteLine();
             Console.WriteLine(text);
             Console.ResetColor();
         }

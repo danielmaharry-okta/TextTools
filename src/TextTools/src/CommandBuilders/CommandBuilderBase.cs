@@ -47,10 +47,10 @@ namespace TextTools.CommandBuilders
       /// <summary>
       /// Gets an option to set a regex for the files in the source directory
       /// </summary>
-      protected Option<string> FilePatternOption { get; } = new Option<string>(
+      protected Option<string> FilePatternOption(string fp) => new Option<string>(
             new string[] { "-f", "--filePattern" },
-            getDefaultValue: () => "*.txt",
-            $"File pattern for files to use within source directory. Default is *.txt"
+            getDefaultValue: () => fp,
+            $"File pattern for files to use within source directory. Default is {fp}"
       );
 
       /// <summary>
@@ -59,13 +59,23 @@ namespace TextTools.CommandBuilders
       /// <param name="subCommand">The <see cref="System.CommandLine.Command" /> to add the options to.</param>
       protected ReportCommandBaseOptionsBinder CreateAndAddCoreReportCommandOptions(Command subCommand)
       {
+         return CreateAndAddCoreReportCommandOptions(subCommand, "*.txt");
+      }
+
+      /// <summary>
+      /// Adds the five core options for a report command - source directory, output type, recurse directory, file pattern, and output directory
+      /// </summary>
+      /// <param name="subCommand">The <see cref="System.CommandLine.Command" /> to add the options to.</param>
+      /// <param name="filePattern">The file pattern to search for</param>
+      protected ReportCommandBaseOptionsBinder CreateAndAddCoreReportCommandOptions(Command subCommand, string filePattern)
+      {
          subCommand.AddOption(SourceDirectoryOption);
          subCommand.AddOption(OutputTypeOption);
          subCommand.AddOption(RecurseDirectoriesOption);
-         subCommand.AddOption(FilePatternOption);
+         subCommand.AddOption(FilePatternOption(filePattern));
          subCommand.AddOption(OutputDirectoryOption);
-			return new ReportCommandBaseOptionsBinder(SourceDirectoryOption, RecurseDirectoriesOption,
-						FilePatternOption, OutputTypeOption, OutputDirectoryOption);
+         return new ReportCommandBaseOptionsBinder(SourceDirectoryOption, RecurseDirectoriesOption,
+                  FilePatternOption(filePattern), OutputTypeOption, OutputDirectoryOption);
       }
    }
 }

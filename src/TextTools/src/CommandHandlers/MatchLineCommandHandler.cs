@@ -57,12 +57,6 @@ namespace TextTools.CommandHandlers
 
 			Worksheet counts = new Worksheet("matchcount");
 			counts.Rows.Add(new List<string> { "match", "count" });
-			// var groups = matchlist.Rows.GroupBy(row => row.Last()).Select(x => new
-			// {
-			// 	url = x.Key,
-			// 	count = x.Count()
-			// });
-
 			counts.Rows.AddRange(matchlist.Rows.GroupBy(row => row.Last())
 				.Select(x => new List<string> { x.Key, x.Count().ToString() }));
 
