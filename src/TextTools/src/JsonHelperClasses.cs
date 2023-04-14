@@ -8,17 +8,22 @@ namespace TextTools
       /// <summary>
       /// Gets or sets the title of the entry
       /// </summary>
-      public string? Title { get; set; }
+      public string Title { get; set; } = string.Empty;
 
       /// <summary>
       /// Gets or sets the relative path of the entry
       /// </summary>
-      public string? Path { get; set; }
+      public string Path { get; set; } = string.Empty;
 
       /// <summary>
       /// Gets or sets the guidename of the entry
       /// </summary>
-      public string? GuideName { get; set; }
+      public string GuideName { get; set; } = string.Empty;
+
+      /// <summary>
+      /// Gets or sets the breadcrumb trail to the page
+      /// </summary>
+      public string Breadcrumb { get; set; } = string.Empty;
 
       /// <summary>
       /// Gets or sets the set of sublinks in the navbar
