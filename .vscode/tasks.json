@@ -58,7 +58,7 @@
          "command": "dotnet",
          "type": "process",
          "args": [
-             "%userprofile%/.nuget/packages/reportgenerator/5.1.10/tools/net6.0/ReportGenerator.dll",
+             "%userprofile%/.nuget/packages/reportgenerator/5.2.4/tools/net8.0/ReportGenerator.dll",
              "-reports:${workspaceFolder}/coverage/*/coverage.cobertura.xml",
              "-targetdir:${workspaceFolder}/coverage/report/",
              "-reporttypes:HtmlSummary"
