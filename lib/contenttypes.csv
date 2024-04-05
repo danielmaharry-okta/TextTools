@@ -1,0 +1,60 @@
+﻿Content Type,Id,Active status,Description,External links,IA Structure - First Draft,Example screenshot,Group Definitions
+API reference,1,Active,"A comprehensive description of the API, including endpoints, methods, parameters, data types, authentication, and examples of how to use the API. The reference serves as a technical guide for developers to understand the API's functionality.",,"524,525,526,527,528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,548,549,550,551,552,553,554,555,556,557,558,559,560,561,562,563,564,565,566,567,568,569,570,571,572,573,574,575,576,577,578,579,580,581,582,583,584,585,586,587,588,589,590,591,592,593,594,595,596,598,599,600,601,602,603,604,605,606,607,608,609,610,611,613,614,615,616,617,618,619,620,621,622,623,624,630,631,632,633,638,639",,
+Best practice,2,Active,"Recommendations and guidelines for optimizing performance, security, and maintainability while using the product or service.",,"500,377",,2
+Code example,3,Not Active,Snippets of code that demonstrate how to implement various features or functions. These examples can be standalone or embedded within other content types.,,,,
+Conceptual overview,4,Active,"High-level explanations of the underlying concepts, architecture, or design principles behind the product or service. These overviews provide developers with a broader understanding of how the system works.",,"496,457,345,468,479,230,167,161,147,141,488,454,513,512,511,515,516,625,466,471,473,462",,1
+Contribution guide,5,Not Active,"Information on how to contribute to the development of the product or service, including guidelines for submitting issues, feature requests, and pull requests.",,,,
+Dynamic Index,6,Active,"This document type is designed to automatically generate and display a list of child documents when a particular node in the navigation tree is selected. Key characteristics of this content type are:
+- Automated Listing: Automatically generates a list of links to child documents based on the site's structure or predefined criteria.
+- Parent-Child Relationship: Acts as a parent node that provides access to related subdocuments (children).
+- Navigation Facilitation: Serves as a navigational tool to help users easily find and access related documents.
+- Dynamic Updating: Updates the list of child documents automatically as new documents are added, existing ones are modified, or old ones are removed.
+- Simplicity and Usability: Typically has minimal content itself, focusing on guiding users to the relevant child documents.",,"269,304,400,157,505,160,158,12,401,26,404,27,28,420,287,626,407,123,451,422,34,39,358,474,333,198,427,50,70,54,660,405,66,67,193,35,140,299,298,96",image.png (https://v5.airtableusercontent.com/v3/u/27/27/1711396800000/K4QpDk5L5o7J6tSBhxm19g/CMWqLIS9GPnWirdpMpugsoGvspgwXftXAqh44Rej6CHBRyDHNjwZvZYQd8kPqM-toXRb9WNph73ZPoZSHey4xKkU0QCO0hEVfXLmDq2WVeQJhCelAF-1GRMjY5GuMCowQOkvYrOXM2bxlFU_8l6Hfw/RZJSOuPRsxJ7Z4oiO8MHEWEExvMHjWcDHspjUyeSqOg),
+Explanation,7,Active,"This content type is focused on more detailed, topic-specific discussions that clarify how certain features, functionalities, or aspects of the product or service operate. This type of document aims to demystify specific elements of the technology, offering practical insights, step-by-step guidance, or in-depth clarification on particular points of interest to developers. 
+
+Unlike the broad scope of a ""Conceptual Overview,"" an ""Explanation"" dives deeper into individual topics, providing the necessary details that enable developers to understand and work with the product or service more effectively.",https://documentation.divio.com/explanation/,"153,152,51,199,283,493,504,469,635,636,143,166,169,357,484,483,482,481,647,648,644,421,459,470,310,452,658,356,73,455,461,300,97,98,369,374,363,667,673,385,668",,1
+FAQ,8,Active,"Frequently asked questions that address common queries, concerns, or misconceptions developers might have.",,"478,477",,
+Glossary,9,Not Active,"A list of terms and definitions specific to the product, service, or domain, helping developers familiarize themselves with the vocabulary used in the documentation.",,,,
+Guidance,11,Active,Content that guides a reader (and optional a particular persona) through the IA with specific links to different pages and sections.,,"463,257",,
+Guide Hub,12,Active,"This type of document serves as a central navigational starting point within a larger documentation system. It's structured to outline various user journeys, guiding users to specific documents through organized links, often presented in a tree view or a similar hierarchical structure. Some key characteristics of a Guide Hub or Documentation Hub:
+
+1. Central Starting Point: Serves as the main entry point for users exploring the documentation.
+2. User Journey Orientations: Lays out different paths users can take, depending on their goals or interests.
+3. Hierarchical Navigation: Presents a tree-view or a similar structure to show the relationship between different documents.
+4. Linking to Child Documents: Includes links to more specific, detailed documents (child docs) under each section of the user journey.
+5. Overview and Context: Provides a brief overview of each section or user journey, giving context before users dive into detailed documents.
+6. Flexibility for Exploration: Allows users to easily navigate between different parts of the documentation without losing their way.
+
+A Guide Hub is especially useful in large documentation systems where the sheer volume of information can be overwhelming. It helps in organizing the content in a user-friendly manner, making it easier for users to find what they need without feeling lost.",,"1,23,40,24,354,480,465,347,273,71,430,431,95,368,353,381,675,415,678,364,406,83,144",,
+How-to ,10,Active,Goal-oriented. Shows how to achieve a specific goal (or solve a specific problem). Series of steps. Not technical. (e.g. a recipe in a cook book),https://documentation.divio.com/how-to-guides/,"289,492,494,495,499,501,290,165,236,324,348,52,68,36,82",,
+How-to: developer focused,13,Active,Goal-oriented. Focused on developing a solution for a specific use case. Developer focused. Cites code samples.,,"292,194,103,640,232,235,234,402,277,276,275,274,279,323,325,429,231,187,399,397,398,408,328,329,332,334,282,281,280,322,47,428,53,318,352,351,350,74,75,76,77,78,79,214,661,211,55,57,58,59,662,60,61,62,63,64,72,37,38,307,308,305,303,302,309,294,433,438,440,669,396,416,663,417,679,680,664,370,386,389,392,393,672,670",,
+Information-oriented reference material,14,Not Active,"Information-oriented, dry description. (e.g. a reference encyclopedia article)",https://documentation.divio.com/reference/,,,
+Integration guide,15,Active,"'- Goal-oriented. 
+- Similar to a how-to but the focus is more technical and geared towards developers integrating an SDK, API, or another library into their applications. 
+- These guides follow a specific use case.  
+- These guides DO NOT contain API Reference information like parameter descriptions (for example see https://developer.okta.com/docs/guides/device-authorization-grant/main/)
+- ",,"453,127,126,125,237,241,240,239,255,254,242,250,249,248,247,246,245,244,260,259,258,261,262,272,268,267,266,650,649,651,655,654,653,286,314,317,291,426,656,657,628,346,327,341,338,339,418,424,425,423,659,256,69,432,434,435,436,437,439,443,444,445",,2
+Link to external site,23,Active,,,,,
+Migration guide,16,Not Active,"Instructions for transitioning from one version of the product or service to another, or from a different product or service altogether.",,,,
+Not applicable,26,Active,Not applicable,,"90,93,94,486,490,91",,
+Quickstart guide,17,Not Active,"Goal-oriented. Similar to an integration guide but quicker to set up, and its focus is getting their application running as fast as possible. The configurations and setup may not be the best practice since the focus here is speed. 
+
+The guide should take less than an hour to complete.
+Best practices don't need to be followed regarding policy and security. They are merely a POC and to get the user up-and-running as fast as possible.
+
+NICE TO HAVES:
+* The user should not have to use the Admin Console to set up the policies. Instead, a command line tool should autoconfigure the admin console.",,,,2
+Reference lookup,22,Active,"A page containing mostly a series of tables or lists for users to look up a fact or definition, and a short explanatory text giving those tables the correct context",,"491,497,498,502,503,86,629,634,331,641",,
+Release notes,18,Not Active,"Information about new features, improvements, bug fixes, and any breaking changes in each release of the product or service.",,,,
+Summary redirect,19,Active,"This document serves primarily as a pointer or a gateway to direct users to the main source material located elsewhere in the documentation.
+
+Key characteristics of this content type include:
+
+Brief Overview: Provides a concise summary or overview of the topic.
+Link to Main Content: Includes a direct link or multiple links to the detailed main content, which is located in a different section of the documentation.
+Navigation Aid: Helps users find key information that is housed in a less intuitive or unexpected part of the site.
+Convenience for Users: Placed in areas where users commonly look for such information, enhancing user experience by saving them time.
+Contextual Information: Offers enough context to help users understand what the main content covers and whether it’s relevant to their needs.
+Redirect Function: Acts as a redirector, seamlessly guiding users to the primary source of information.",,"11,306,349,441,409,382,677,371",,
+Troubleshooting guide,20,Not Active,Resources to help developers diagnose and resolve common issues they may encounter while using the product or service.,,,,
+Tutorial (learning-oriented tutorial),21,Not Active,"Learning-oriented, allows a newcomer to get started, formatted like a lesson. Details a series of steps to complete a project of some kind. (e.g. teach a small child how to cook)",https://documentation.divio.com/tutorials/,,,

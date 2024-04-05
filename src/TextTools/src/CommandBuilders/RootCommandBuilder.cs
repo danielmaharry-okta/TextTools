@@ -24,6 +24,7 @@ namespace TextTools.CommandBuilders
          var rcb = new ReportCommandBuilder();
          rootCommand.Add(rcb.BuildMatchListSubCommand());
          rootCommand.Add(rcb.BuildIAAuditSubCommand());
+         rootCommand.Add(rcb.BuildIAProtoSubCommand());
          return rootCommand;
       }
    }

@@ -2,6 +2,7 @@ namespace TextTools.CommandBuilders
 {
    using System;
    using System.CommandLine;
+   using System.Reflection.Metadata.Ecma335;
    using TextTools.CommandHandlers;
 
    class ReportCommandBuilder : CommandBuilderBase
@@ -60,6 +61,45 @@ namespace TextTools.CommandBuilders
          );
 
          return iaAuditCommand;
+      }
+
+      internal Command BuildIAProtoSubCommand()
+      {
+         var iaProtoCommand = new Command("iaproto", "Builds a set of markdown files matching the IA spreadsheet for compilation in hugo");
+         var coreOptions = CreateAndAddCoreReportCommandOptions(iaProtoCommand, "*.csv");
+         var pagelistOption = new Option<FileInfo>(
+            name: "--pagelist",
+            getDefaultValue: () => new FileInfo(@"c:\temp\pagelist.csv"),
+            description: "Page list csv file saved from airtable"
+         );
+         pagelistOption.AddAlias("--pl");
+
+         var contentTypesOption = new Option<FileInfo>(
+            name: "--contenttypes",
+            getDefaultValue: () => new FileInfo(@"c:\temp\contenttypes.csv"),
+            description: "Content types csv file saved from airtable"
+         );
+         contentTypesOption.AddAlias("--ct");
+
+         var mainContentOnlyOption = new Option<bool>(
+            name: "--mainContentOnly",
+            getDefaultValue: () => true,
+            description: "Show main content only in the build"
+         );
+         mainContentOnlyOption.AddAlias("--mco");
+
+         iaProtoCommand.AddOption(pagelistOption);
+         iaProtoCommand.AddOption(contentTypesOption);
+         iaProtoCommand.AddOption(mainContentOnlyOption);
+         iaProtoCommand.SetHandler(
+            (reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption) =>
+            {
+               IaProtoCommandHandler ipHandler = new IaProtoCommandHandler(reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption);
+               ipHandler.Go();
+            }, coreOptions, pagelistOption, contentTypesOption, mainContentOnlyOption
+         );
+
+         return iaProtoCommand;
       }
    }
 }
