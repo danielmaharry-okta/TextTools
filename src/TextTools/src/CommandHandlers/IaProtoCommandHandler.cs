@@ -3,6 +3,7 @@ namespace TextTools.CommandHandlers
    using System;
    using System.Globalization;
    using System.Text;
+   using System.Text.RegularExpressions;
    using CsvHelper;
    using TextTools.Enums;
 
@@ -25,11 +26,13 @@ namespace TextTools.CommandHandlers
       /// <param name="pageListFile">The page list spreadsheet as a csv file</param>
       /// <param name="contentTypesFile">The content types list as a csv file</param>
       /// <param name="mainContentOnly">Whether to include only main content in the build</param>
-      public IaProtoCommandHandler(ReportCommandBaseOptions coreOptions, FileInfo pageListFile, FileInfo contentTypesFile, bool mainContentOnly) : base(coreOptions)
+      /// <param name="numberOfLevels">The number of nav levels to include in the build</param>
+      public IaProtoCommandHandler(ReportCommandBaseOptions coreOptions, FileInfo pageListFile, FileInfo contentTypesFile, bool mainContentOnly, int numberOfLevels) : base(coreOptions)
       {
          PageListFileInfo = pageListFile;
          ContentTypeFileInfo = contentTypesFile;
          MainContentOnly = mainContentOnly;
+         NumberOfLevels = numberOfLevels;
       }
 
       /// <summary>
@@ -40,12 +43,17 @@ namespace TextTools.CommandHandlers
       /// <summary>
       /// Gets or sets the content types file
       /// </summary>
-      public FileInfo ContentTypeFileInfo { get; set; } = new FileInfo(@"c:\temp\contenttypes.json");
+      public FileInfo ContentTypeFileInfo { get; set; } = new FileInfo(@"c:\temp\contenttypes.csv");
 
       /// <summary>
       ///  Gets or sets whether only main content should be included in the build
       /// </summary>
-      public bool MainContentOnly { get; set; } = true;
+      public bool MainContentOnly { get; set; } = false;
+
+      /// <summary>
+      /// Gets or sets the number of nav levels to include in the build
+      /// </summary>
+      public int NumberOfLevels { get; set; } = 6;
 
       /// <summary>
       /// Gets or sets a list of all defined content types.
@@ -74,6 +82,12 @@ namespace TextTools.CommandHandlers
             return false;
          }
 
+         if (NumberOfLevels < 1 || NumberOfLevels > 6)
+         {
+            SendToConsole($"Please set number of levels to generate to value between 1 and 6", ConsoleColor.Red);
+            return false;
+         }
+
          SendToConsole($"Exclude secondary content: {MainContentOnly}", ConsoleColor.Yellow);
 
          return true;
@@ -94,10 +108,24 @@ namespace TextTools.CommandHandlers
          fileReport.Rows.Add(["Weight", "File", "Title"]);
 
          SendToConsole("Building Pages", ConsoleColor.Blue);
-         foreach (var p in Pages)
+         BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Home page"), false);
+         BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Main content"), false);
+
+         if (!MainContentOnly)
          {
-            StringBuilder pageText = GeneratePageContents(p);
-            FileInfo pageFile = p.GetPageFilePath(ContentDirectory);
+            BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Supportive content"), true);
+         }
+
+         Reports.Add(fileReport);
+         SendToConsole("Site built", ConsoleColor.Green);
+      }
+
+      private void BuildPageSection(DirectoryInfo ContentDirectory, Worksheet fileReport, IEnumerable<PageListEntry> pages, bool hideUnderContentRoleStub)
+      {
+         foreach (var p in pages.OrderBy(p => p.Weight))
+         {
+            string pageText = GeneratePageContents(p);
+            FileInfo pageFile = p.GetAbsolutePageFilePath(ContentDirectory, hideUnderContentRoleStub);
 
             try
             {
@@ -123,9 +151,6 @@ namespace TextTools.CommandHandlers
 
             fileReport.Rows.Add([p.Weight.ToString(), pageFile.FullName, p.Title]);
          }
-
-         Reports.Add(fileReport);
-         SendToConsole("Site built", ConsoleColor.Green);
       }
 
       private void InitializeListsFromCsvFiles()
@@ -147,22 +172,38 @@ namespace TextTools.CommandHandlers
             var pageList = csv.GetRecords<PageListEntry>().ToList();
             foreach (var pl in pageList)
             {
-               if (MainContentOnly)
+               if (
+                  (NumberOfLevels == 1 && pl.Level2.HasValue()) ||
+                  (NumberOfLevels == 2 && pl.Level3.HasValue()) ||
+                  (NumberOfLevels == 3 && pl.Level4.HasValue()) ||
+                  (NumberOfLevels == 4 && pl.Level5.HasValue()) ||
+                  (NumberOfLevels == 5 && pl.Level6.HasValue())
+               )
                {
-                  if (pl.ContentRole == "Main content"  || pl.ContentRole == "Home page")
-                  {
-                     pl.Weight = Pages.Count;
-                     Pages.Add(pl);
-                  }
+                  continue;
                }
-               else
-               {
-                     pl.Weight = Pages.Count;
-                     Pages.Add(pl);
-               }
+
+               pl.Weight = Pages.Count + (pl.ContentRole == "Supportive content" ? 1000 : 0);
+               Pages.Add(pl);
             }
          }
+
+         Pages.Add(SupportiveContentStub());
          SendToConsole($"Found {Pages.Count} pages", ConsoleColor.Green);
+      }
+
+      private PageListEntry SupportiveContentStub()
+      {
+         return new PageListEntry
+         {
+            ContentRole = "Supportive content",
+            Level1 = "Supportive content",
+            Title = "Supportive Content",
+            Weight = 1000,
+            DocDescription = "This area contains secondary content typically not found in the main navigation of the DevDocs site.",
+            InPhase1 = "yes",
+            IsStub = true
+         };
       }
 
       private DirectoryInfo CreateOutputContentDirectory()
@@ -176,7 +217,7 @@ namespace TextTools.CommandHandlers
          return Directory.CreateDirectory(contentDirectoryPath);
       }
 
-      private StringBuilder GeneratePageContents(PageListEntry p)
+      private string GeneratePageContents(PageListEntry p)
       {
          StringBuilder contents = new();
 
@@ -194,7 +235,7 @@ namespace TextTools.CommandHandlers
          if (p.ContentRole == "Home page")
          {
             AddHomePageIntro(contents);
-            return contents;
+            return contents.ToString();
          }
 
          AddIfItHasAValue(contents, "In Phase 1?", p.InPhase1);
@@ -213,14 +254,37 @@ namespace TextTools.CommandHandlers
          AddIfItHasAValue(contents, "New or existing doc?", p.DocumentType);
          AddIfItHasAValue(contents, "Target personas", p.TargetPersonas);
          AddIfItHasAValue(contents, "Dimensioned by", p.Dimensions, "No doc dimension");
-         contents.AppendLine($"**Content type: {p.ContentType.Trim()}**").AppendLine();
-         contents.AppendLine(GetContentTypeDescription(p.ContentType));
-         contents.AppendLine();
          AddIfItHasAValue(contents, "Description", p.DocDescription);
          AddIfItHasAValue(contents, "Changes to be made", p.SuggestedChanges);
          AddIfItHasAValue(contents, "Links to original docs", p.ExistingLinks);
          AddIfItHasAValue(contents, "Validation", p.Validation);
-         return contents;
+         contents.AppendLine($"**Content type: {p.ContentType.Trim()}**").AppendLine();
+         contents.AppendLine(GetContentTypeDescription(p.ContentType));
+         contents.AppendLine();
+
+         return FindAndLinkInternalIDs(contents);
+      }
+
+      // Finds any instance of the string ID: xxx and adds a link to the page with that internal ID number.
+      private string FindAndLinkInternalIDs(StringBuilder contents)
+      {
+         string uncheckedText = contents.ToString();
+         Regex IDstrings = new(@"ID\W?:\W?(\d+)");
+         var matches = IDstrings.Matches(uncheckedText);
+
+         foreach (Match match in matches)
+         {
+            string idString = match.Groups[0].Value;
+            string pageID = match.Groups[1].Value;
+
+            var targetPages = Pages.Where(p => p.Id == pageID);
+            if (targetPages.Any())
+            {
+               uncheckedText = uncheckedText.Replace(idString, $"[{idString}](/{targetPages.First().GetRelativeFilePath().Replace("\\", "/")})");
+            }
+         }
+
+         return uncheckedText;
       }
 
       private string? GetContentTypeDescription(string contentType)
@@ -241,7 +305,9 @@ namespace TextTools.CommandHandlers
             return;
          }
 
-         contents.AppendLine($"**{name}**: {value}").AppendLine();
+         string undashedContent = value.EndsWith("- ") ? value.Remove(value.Length - 2) : value;
+
+         contents.AppendLine($"**{name}**: {undashedContent.Trim()}").AppendLine();
          return;
       }
 
@@ -259,7 +325,7 @@ namespace TextTools.CommandHandlers
          contents.AppendLine("Here's what we need from you:");
          contents.AppendLine("* Dive into the navigation menu to explore the proposed groupings and item placements.");
          contents.AppendLine("* Reflect on the clarity and intuitiveness of these new groupings and the ease of navigation. Consider how the new structure aligns with your expectations and needs.");
-         contents.AppendLine("* Share your invaluable feedback using the [IA Prototype feedback spreadsheet](https://docs.google.com/spreadsheets/d/1wsnbNcJdPsxHszTYzDEPYj4ZUEyJs_YGtRgUdsSruZU/edit#gid=0). Your insights on the new IA, document placements, and any additional attributes are crucial for refining our documentation site.");
+         contents.AppendLine("* Share your invaluable feedback using the [IA Prototype v2 feedback spreadsheet](https://docs.google.com/spreadsheets/d/1A6c4wrMprplL3UJqxZyf_AeMKSqrQSNJ-W0Wd8EudLo/edit?usp=sharing). Your insights on the new IA, document placements, and any additional attributes are crucial for refining our documentation site.");
          contents.AppendLine();
          contents.AppendLine("Your feedback is pivotal in crafting a documentation site that is informative, easily navigable, and intuitive. We thank you in advance for your time and thoughtful contributions.");
          return;

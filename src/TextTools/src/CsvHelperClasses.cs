@@ -12,7 +12,7 @@ namespace TextTools
       /// Gets or sets the page ID
       /// </summary>
       [Name("Id")]
-      public int Id { get; set; } = 0;
+      public string Id { get; set; } = "0";
 
       /// <summary>
       /// Gets or sets the current draft status of the page in the spreadsheet
@@ -153,7 +153,6 @@ namespace TextTools
       [Name("Primary targetted personas")]
       public string TargetPersonas { get; set; } = string.Empty;
 
-
       /// <summary>
       /// Gets or sets the page's weight - it's position in the left hand menu
       /// </summary>
@@ -161,14 +160,36 @@ namespace TextTools
       public int Weight { get; set; } = 0;
 
       /// <summary>
-      /// Calculates the file path for the page
+      /// Gets or sets whether the page is an artifically added stub for the nav
+      /// </summary>
+      [Ignore]
+      public bool IsStub { get; set; } = false;
+
+      /// <summary>
+      /// Calculates the absolute file path for the page
       /// </summary>
       /// <param name="baseDirectory"></param>
+      /// <param name="hideUnderContentRoleStub">Whether to add an additional directory set to the name of the page's content type to hide it in the nav</param>
       /// <returns></returns>
-      public FileInfo GetPageFilePath(DirectoryInfo baseDirectory)
+      public FileInfo GetAbsolutePageFilePath(DirectoryInfo baseDirectory, bool hideUnderContentRoleStub)
       {
-         string relativePath = Path.Combine(Level1.Trim(), Level2.Trim(), Level3.Trim(), Level4.Trim(), Level5.Trim(), Level6.Trim(), "_index.md").AsSafeFileName();
-         return new FileInfo(Path.Combine(baseDirectory.FullName, relativePath));
+         var filePath = GetRelativeFilePath();
+
+         if (hideUnderContentRoleStub && !IsStub)
+         {
+            filePath = Path.Combine(ContentRole.Trim(), filePath).AsSafeFileName();
+         }
+
+         return new FileInfo(Path.Combine(baseDirectory.FullName, filePath));
+      }
+
+      /// <summary>
+      /// Calculates the relative file path for the page
+      /// </summary>
+      /// <returns></returns>
+      public string GetRelativeFilePath()
+      {
+         return Path.Combine(Level1.Trim(), Level2.Trim(), Level3.Trim(), Level4.Trim(), Level5.Trim(), Level6.Trim(), "_index.md").AsSafeFileName();
       }
 
       /// <summary>
@@ -176,7 +197,7 @@ namespace TextTools
       /// </summary>
       public string GetNavTitle()
       {
-         return new string[] { Level6, Level5, Level4, Level3, Level2, Level1 }.FirstOrDefault(s => s.HasValue()) ?? "Unknown";
+         return new string[] { Level6, Level5, Level4, Level3, Level2, Level1 }.FirstOrDefault(s => s.HasValue()) ?? Title;
       }
    }
 

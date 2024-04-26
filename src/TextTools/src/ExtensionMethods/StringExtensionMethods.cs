@@ -16,7 +16,7 @@ namespace TextTools
       public static string AsSafeFileName(this string filename)
       {
 			string safename = Regex.Replace(filename, $"[{string.Concat(Path.GetInvalidFileNameChars())}]", string.Empty);
-         return safename.Replace(" ", "-").Replace("'", string.Empty);
+         return safename.Replace(",", string.Empty).Replace(" ", "-").Replace("'", string.Empty);
       }
 
 

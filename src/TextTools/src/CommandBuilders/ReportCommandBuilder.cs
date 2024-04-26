@@ -83,20 +83,28 @@ namespace TextTools.CommandBuilders
 
          var mainContentOnlyOption = new Option<bool>(
             name: "--mainContentOnly",
-            getDefaultValue: () => true,
+            getDefaultValue: () => false,
             description: "Show main content only in the build"
          );
          mainContentOnlyOption.AddAlias("--mco");
 
+         var numberOfLevelsOption = new Option<int>(
+            name: "--numberOfLevels",
+            getDefaultValue: () => 6,
+            description: "Number of nav levels to include in the build, from 1 to 6"
+         );
+         numberOfLevelsOption.AddAlias("--lvl");
+
          iaProtoCommand.AddOption(pagelistOption);
          iaProtoCommand.AddOption(contentTypesOption);
          iaProtoCommand.AddOption(mainContentOnlyOption);
+         iaProtoCommand.AddOption(numberOfLevelsOption);
          iaProtoCommand.SetHandler(
-            (reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption) =>
+            (reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption) =>
             {
-               IaProtoCommandHandler ipHandler = new IaProtoCommandHandler(reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption);
+               IaProtoCommandHandler ipHandler = new IaProtoCommandHandler(reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption);
                ipHandler.Go();
-            }, coreOptions, pagelistOption, contentTypesOption, mainContentOnlyOption
+            }, coreOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption
          );
 
          return iaProtoCommand;

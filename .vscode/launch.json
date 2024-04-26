@@ -13,7 +13,7 @@
          "program": "${workspaceFolder}/src/TextTools/bin/Debug/net8.0/TextTools.dll",
          "args": [
             "iaproto",
-            "-t=txt"
+            "--pl=c:\\temp\\suplist.csv"
          ],
          "cwd": "${workspaceFolder}/src/TextTools",
          // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
