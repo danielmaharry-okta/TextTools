@@ -173,7 +173,7 @@ namespace TextTools
       /// <returns></returns>
       public FileInfo GetAbsolutePageFilePath(DirectoryInfo baseDirectory, bool hideUnderContentRoleStub)
       {
-         var filePath = GetRelativeFilePath();
+         var filePath = GetRelativeFilePath(false);
 
          if (hideUnderContentRoleStub && !IsStub)
          {
@@ -187,9 +187,9 @@ namespace TextTools
       /// Calculates the relative file path for the page
       /// </summary>
       /// <returns></returns>
-      public string GetRelativeFilePath()
+      public string GetRelativeFilePath(bool AddMainContentStub)
       {
-         return Path.Combine(Level1.Trim(), Level2.Trim(), Level3.Trim(), Level4.Trim(), Level5.Trim(), Level6.Trim(), "_index.md").AsSafeFileName();
+         return Path.Combine(AddMainContentStub ? ContentRole : string.Empty, Level1.Trim(), Level2.Trim(), Level3.Trim(), Level4.Trim(), Level5.Trim(), Level6.Trim(), "_index.md").AsSafeFileName();
       }
 
       /// <summary>

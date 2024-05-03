@@ -67,6 +67,8 @@ namespace TextTools.CommandHandlers
 
       private DirectoryInfo ContentDirectory { get; set; } = new DirectoryInfo(@"c:\temp");
 
+      private bool StubMainContent = true;
+
       /// <inheritdoc />
       protected override bool ValidateNonCoreOptions()
       {
@@ -109,7 +111,7 @@ namespace TextTools.CommandHandlers
 
          SendToConsole("Building Pages", ConsoleColor.Blue);
          BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Home page"), false);
-         BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Main content"), false);
+         BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Main content"), StubMainContent);
 
          if (!MainContentOnly)
          {
@@ -188,8 +190,26 @@ namespace TextTools.CommandHandlers
             }
          }
 
+         if (StubMainContent)
+         {
+            Pages.Add(MainContentStub());
+         }
          Pages.Add(SupportiveContentStub());
          SendToConsole($"Found {Pages.Count} pages", ConsoleColor.Green);
+      }
+
+      private PageListEntry MainContentStub()
+      {
+         return new PageListEntry
+         {
+            ContentRole = "Main content",
+            Level1 = "Main content",
+            Title = "Main Content",
+            Weight = 1,
+            DocDescription = "This area contains the main content of the site typically found in the main navigation of the DevDocs site.",
+            InPhase1 = "yes",
+            IsStub = true
+         };
       }
 
       private PageListEntry SupportiveContentStub()
@@ -280,7 +300,7 @@ namespace TextTools.CommandHandlers
             var targetPages = Pages.Where(p => p.Id == pageID);
             if (targetPages.Any())
             {
-               uncheckedText = uncheckedText.Replace(idString, $"[{idString}](/{targetPages.First().GetRelativeFilePath().Replace("\\", "/")})");
+               uncheckedText = uncheckedText.Replace(idString, $"[{idString}](/{targetPages.First().GetRelativeFilePath(StubMainContent).Replace("\\", "/")})");
             }
          }
 
@@ -325,7 +345,7 @@ namespace TextTools.CommandHandlers
          contents.AppendLine("Here's what we need from you:");
          contents.AppendLine("* Dive into the navigation menu to explore the proposed groupings and item placements.");
          contents.AppendLine("* Reflect on the clarity and intuitiveness of these new groupings and the ease of navigation. Consider how the new structure aligns with your expectations and needs.");
-         contents.AppendLine("* Share your invaluable feedback using the [IA Prototype v2 feedback spreadsheet](https://docs.google.com/spreadsheets/d/1A6c4wrMprplL3UJqxZyf_AeMKSqrQSNJ-W0Wd8EudLo/edit?usp=sharing). Your insights on the new IA, document placements, and any additional attributes are crucial for refining our documentation site.");
+         contents.AppendLine("* Share your invaluable feedback using the [IA Prototype v2 feedback spreadsheet](https://docs.google.com/spreadsheets/d/1wsnbNcJdPsxHszTYzDEPYj4ZUEyJs_YGtRgUdsSruZU/edit#gid=375236245). Your insights on the new IA, document placements, and any additional attributes are crucial for refining our documentation site.");
          contents.AppendLine();
          contents.AppendLine("Your feedback is pivotal in crafting a documentation site that is informative, easily navigable, and intuitive. We thank you in advance for your time and thoughtful contributions.");
          return;
