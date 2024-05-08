@@ -95,16 +95,24 @@ namespace TextTools.CommandBuilders
          );
          numberOfLevelsOption.AddAlias("--lvl");
 
+         var targetUrlRootOption = new Option<string>(
+            name: "--targetUrlRoot",
+            getDefaultValue: () => "https://danielmaharry-okta.github.io/iaproto",
+            description: "The root URL of the live prototype"
+         );
+         numberOfLevelsOption.AddAlias("--root");
+
          iaProtoCommand.AddOption(pagelistOption);
          iaProtoCommand.AddOption(contentTypesOption);
          iaProtoCommand.AddOption(mainContentOnlyOption);
          iaProtoCommand.AddOption(numberOfLevelsOption);
+         iaProtoCommand.AddOption(targetUrlRootOption);
          iaProtoCommand.SetHandler(
-            (reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption) =>
+            (reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption, targetUrlRootOption) =>
             {
-               IaProtoCommandHandler ipHandler = new IaProtoCommandHandler(reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption);
+               IaProtoCommandHandler ipHandler = new IaProtoCommandHandler(reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption, targetUrlRootOption);
                ipHandler.Go();
-            }, coreOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption
+            }, coreOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption, targetUrlRootOption
          );
 
          return iaProtoCommand;

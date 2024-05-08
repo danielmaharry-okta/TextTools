@@ -3,7 +3,9 @@ namespace TextTools.CommandHandlers
    using System;
    using System.Globalization;
    using System.Text;
+   using System.Text.Encodings.Web;
    using System.Text.RegularExpressions;
+   using System.Web;
    using CsvHelper;
    using TextTools.Enums;
 
@@ -27,12 +29,14 @@ namespace TextTools.CommandHandlers
       /// <param name="contentTypesFile">The content types list as a csv file</param>
       /// <param name="mainContentOnly">Whether to include only main content in the build</param>
       /// <param name="numberOfLevels">The number of nav levels to include in the build</param>
-      public IaProtoCommandHandler(ReportCommandBaseOptions coreOptions, FileInfo pageListFile, FileInfo contentTypesFile, bool mainContentOnly, int numberOfLevels) : base(coreOptions)
+      /// <param name="targetRootUrl">The root URL of the live prototype site</param>
+      public IaProtoCommandHandler(ReportCommandBaseOptions coreOptions, FileInfo pageListFile, FileInfo contentTypesFile, bool mainContentOnly, int numberOfLevels, string targetRootUrl) : base(coreOptions)
       {
          PageListFileInfo = pageListFile;
          ContentTypeFileInfo = contentTypesFile;
          MainContentOnly = mainContentOnly;
          NumberOfLevels = numberOfLevels;
+         TargetRootUrl = targetRootUrl;
       }
 
       /// <summary>
@@ -56,6 +60,11 @@ namespace TextTools.CommandHandlers
       public int NumberOfLevels { get; set; } = 6;
 
       /// <summary>
+      /// Gets or sets the root URL of the live prototype site
+      /// </summary>
+      public string TargetRootUrl { get; set; } = "https://danielmaharry-okta.github.io/iaproto";
+
+      /// <summary>
       /// Gets or sets a list of all defined content types.
       /// </summary>
       public List<ContentType> ContentTypes { get; set; } = [];
@@ -67,7 +76,9 @@ namespace TextTools.CommandHandlers
 
       private DirectoryInfo ContentDirectory { get; set; } = new DirectoryInfo(@"c:\temp");
 
-      private bool StubMainContent = true;
+      private readonly bool StubMainContent = true;
+
+      private readonly string FeedbackFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdwubXc5pUELg1L5B7qKjyS1_vnfB-2kALIAJOqwoUQjVUHBA/viewform?usp=pp_url&entry.395545573=PAGE_URL";
 
       /// <inheritdoc />
       protected override bool ValidateNonCoreOptions()
@@ -91,6 +102,8 @@ namespace TextTools.CommandHandlers
          }
 
          SendToConsole($"Exclude secondary content: {MainContentOnly}", ConsoleColor.Yellow);
+         SendToConsole($"Number of levels: {NumberOfLevels}", ConsoleColor.Yellow);
+         SendToConsole($"Root URL: {TargetRootUrl}", ConsoleColor.Yellow);
 
          return true;
       }
@@ -126,12 +139,12 @@ namespace TextTools.CommandHandlers
       {
          foreach (var p in pages.OrderBy(p => p.Weight))
          {
-            string pageText = GeneratePageContents(p);
+            string pageText = GeneratePageContents(p, hideUnderContentRoleStub);
             FileInfo pageFile = p.GetAbsolutePageFilePath(ContentDirectory, hideUnderContentRoleStub);
 
             try
             {
-               if (!Directory.Exists(pageFile.DirectoryName))
+               if (!Directory.Exists(pageFile.DirectoryName) && pageFile.DirectoryName.HasValue())
                {
                   Directory.CreateDirectory(pageFile.DirectoryName);
                }
@@ -237,7 +250,7 @@ namespace TextTools.CommandHandlers
          return Directory.CreateDirectory(contentDirectoryPath);
       }
 
-      private string GeneratePageContents(PageListEntry p)
+      private string GeneratePageContents(PageListEntry p, bool hideUnderContentRoleStub)
       {
          StringBuilder contents = new();
 
@@ -250,6 +263,9 @@ namespace TextTools.CommandHandlers
          contents.AppendLine("+++");
          contents.AppendLine();
          contents.AppendLine($"## {p.Title}");
+         contents.AppendLine();
+
+         contents.AppendLine($"[Click here to give feedback about this page]({GenerateFeedbackURL(p.GetAbsolutePageFilePath(ContentDirectory, hideUnderContentRoleStub).FullName)})");
          contents.AppendLine();
 
          if (p.ContentRole == "Home page")
@@ -283,6 +299,12 @@ namespace TextTools.CommandHandlers
          contents.AppendLine();
 
          return FindAndLinkInternalIDs(contents);
+      }
+
+      private string GenerateFeedbackURL(string absoluteFilePath)
+      {
+         string absoluteUrl = absoluteFilePath.Replace(ContentDirectory.FullName, TargetRootUrl).Replace("\\", "/").Replace("_index.md", string.Empty);
+         return FeedbackFormURL.Replace("PAGE_URL", HttpUtility.HtmlEncode(absoluteUrl));
       }
 
       // Finds any instance of the string ID: xxx and adds a link to the page with that internal ID number.

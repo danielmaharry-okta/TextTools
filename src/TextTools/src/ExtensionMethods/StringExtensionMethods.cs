@@ -24,7 +24,7 @@ namespace TextTools
       /// Returns whether a string has any non-whitespace contents
       /// </summary>
       /// <param name="s"></param>
-      /// <returns>true if it ahs contents, false if null</returns>
+      /// <returns>true if it has contents, false if null</returns>
       public static bool HasValue(this string s) => !String.IsNullOrWhiteSpace(s);
    }
 }
