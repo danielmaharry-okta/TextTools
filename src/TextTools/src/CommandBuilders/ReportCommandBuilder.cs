@@ -100,19 +100,39 @@ namespace TextTools.CommandBuilders
             getDefaultValue: () => "https://danielmaharry-okta.github.io/iaproto",
             description: "The root URL of the live prototype"
          );
-         numberOfLevelsOption.AddAlias("--root");
+         targetUrlRootOption.AddAlias("--root");
+
+         var mainContentStubOption = new Option<string>(
+            name: "--mainContentStub",
+            getDefaultValue: () => string.Empty,
+            description: "Sets a root folder name for all main content. Leave blank if root folder not required."
+         );
+         mainContentStubOption.AddAlias("--mcs");
+
+         var supplementalContentStubOption = new Option<string>(
+            name: "--supplementalContentStub",
+            getDefaultValue: () => string.Empty,
+            description: "Sets a root folder name for all supplemental content. Leave blank if root folder not required."
+         );
+         supplementalContentStubOption.AddAlias("--scs");
 
          iaProtoCommand.AddOption(pagelistOption);
          iaProtoCommand.AddOption(contentTypesOption);
          iaProtoCommand.AddOption(showSupplementalContentOption);
          iaProtoCommand.AddOption(numberOfLevelsOption);
          iaProtoCommand.AddOption(targetUrlRootOption);
+         iaProtoCommand.AddOption(mainContentStubOption);
+         iaProtoCommand.AddOption(supplementalContentStubOption);
          iaProtoCommand.SetHandler(
-            (reportCommandBaseOptions, pagelistOption, contentTypesOption, showSupplementalContentOption, numberOfLevelsOption, targetUrlRootOption) =>
+            (reportCommandBaseOptions, pagelistOption, contentTypesOption, showSupplementalContentOption,
+             numberOfLevelsOption, targetUrlRootOption, mainContentStubOption, supplementalContentStubOption) =>
             {
-               IaProtoCommandHandler ipHandler = new IaProtoCommandHandler(reportCommandBaseOptions, pagelistOption, contentTypesOption, showSupplementalContentOption, numberOfLevelsOption, targetUrlRootOption);
+               IaProtoCommandHandler ipHandler = new IaProtoCommandHandler(
+                  reportCommandBaseOptions, pagelistOption, contentTypesOption, showSupplementalContentOption,
+                  numberOfLevelsOption, targetUrlRootOption, mainContentStubOption, supplementalContentStubOption);
                ipHandler.Go();
-            }, coreOptions, pagelistOption, contentTypesOption, showSupplementalContentOption, numberOfLevelsOption, targetUrlRootOption
+            }, coreOptions, pagelistOption, contentTypesOption, showSupplementalContentOption,
+            numberOfLevelsOption, targetUrlRootOption, mainContentStubOption, supplementalContentStubOption
          );
 
          return iaProtoCommand;

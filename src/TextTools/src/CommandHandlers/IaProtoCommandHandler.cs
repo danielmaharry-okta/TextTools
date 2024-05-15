@@ -3,7 +3,6 @@ namespace TextTools.CommandHandlers
    using System;
    using System.Globalization;
    using System.Text;
-   using System.Text.Encodings.Web;
    using System.Text.RegularExpressions;
    using System.Web;
    using CsvHelper;
@@ -30,13 +29,18 @@ namespace TextTools.CommandHandlers
       /// <param name="showSupplementalContent">Whether to include supplemental content in the build</param>
       /// <param name="numberOfLevels">The number of nav levels to include in the build</param>
       /// <param name="targetRootUrl">The root URL of the live prototype site</param>
-      public IaProtoCommandHandler(ReportCommandBaseOptions coreOptions, FileInfo pageListFile, FileInfo contentTypesFile, bool showSupplementalContent, int numberOfLevels, string targetRootUrl) : base(coreOptions)
+      /// <param name="mainContentStub">The root folder name for all main content</param>
+      /// <param name="supplementalContentStub">The root folder name for all main content</param>
+      public IaProtoCommandHandler(ReportCommandBaseOptions coreOptions, FileInfo pageListFile, FileInfo contentTypesFile, 
+         bool showSupplementalContent, int numberOfLevels, string targetRootUrl, string mainContentStub, string supplementalContentStub) : base(coreOptions)
       {
          PageListFileInfo = pageListFile;
          ContentTypeFileInfo = contentTypesFile;
          ShowSupplementalContent = showSupplementalContent;
          NumberOfLevels = numberOfLevels;
          TargetRootUrl = targetRootUrl;
+         MainContentStub = mainContentStub;
+         SupplementalContentStub = supplementalContentStub;
       }
 
       /// <summary>
@@ -65,6 +69,16 @@ namespace TextTools.CommandHandlers
       public string TargetRootUrl { get; set; } = "https://danielmaharry-okta.github.io/iaproto";
 
       /// <summary>
+      /// Gets or sets the root folder name for all main content. Leave empty if one is not required.
+      /// </summary>
+      public string MainContentStub { get; set; } = string.Empty;
+
+      /// <summary>
+      /// Gets or sets the root folder name for all supplemental content. Leave empty if one is not required.
+      /// </summary>
+      public string SupplementalContentStub { get; set; } = string.Empty;
+
+      /// <summary>
       /// Gets or sets a list of all defined content types.
       /// </summary>
       public List<ContentType> ContentTypes { get; set; } = [];
@@ -75,8 +89,6 @@ namespace TextTools.CommandHandlers
       public List<PageListEntry> Pages { get; set; } = [];
 
       private DirectoryInfo ContentDirectory { get; set; } = new DirectoryInfo(@"c:\temp");
-
-      private readonly bool StubMainContent = true;
 
       private readonly string FeedbackFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdwubXc5pUELg1L5B7qKjyS1_vnfB-2kALIAJOqwoUQjVUHBA/viewform?usp=pp_url&entry.395545573=PAGE_URL";
 
@@ -104,6 +116,8 @@ namespace TextTools.CommandHandlers
          SendToConsole($"Show secondary content: {ShowSupplementalContent}", ConsoleColor.Yellow);
          SendToConsole($"Number of levels: {NumberOfLevels}", ConsoleColor.Yellow);
          SendToConsole($"Root URL: {TargetRootUrl}", ConsoleColor.Yellow);
+         SendToConsole($"Main Content Stub: {MainContentStub}", ConsoleColor.Yellow);
+         SendToConsole($"Supplementary Content Stub: {SupplementalContentStub}", ConsoleColor.Yellow);
 
          return true;
       }
@@ -123,24 +137,24 @@ namespace TextTools.CommandHandlers
          fileReport.Rows.Add(["Weight", "File", "Title"]);
 
          SendToConsole("Building Pages", ConsoleColor.Blue);
-         BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Home page"), false);
-         BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Main content"), StubMainContent);
+         BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Home page"), string.Empty);
+         BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Main content"), MainContentStub);
 
          if (ShowSupplementalContent)
          {
-            BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Supportive content"), true);
+            BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Supportive content"), SupplementalContentStub);
          }
 
          Reports.Add(fileReport);
          SendToConsole("Site built", ConsoleColor.Green);
       }
 
-      private void BuildPageSection(DirectoryInfo ContentDirectory, Worksheet fileReport, IEnumerable<PageListEntry> pages, bool hideUnderContentRoleStub)
+      private void BuildPageSection(DirectoryInfo ContentDirectory, Worksheet fileReport, IEnumerable<PageListEntry> pages, string navRootDirectory)
       {
          foreach (var p in pages.OrderBy(p => p.Weight))
          {
-            string pageText = GeneratePageContents(p, hideUnderContentRoleStub);
-            FileInfo pageFile = p.GetAbsolutePageFilePath(ContentDirectory, hideUnderContentRoleStub);
+            string pageText = GeneratePageContents(p, navRootDirectory);
+            FileInfo pageFile = p.GetAbsolutePageFilePath(ContentDirectory, navRootDirectory);
 
             try
             {
@@ -203,40 +217,41 @@ namespace TextTools.CommandHandlers
             }
          }
 
-         if (StubMainContent)
+         if (MainContentStub.HasValue())
          {
-            Pages.Add(MainContentStub());
+            Pages.Add(MainContentHomepage());
          }
-         Pages.Add(SupportiveContentStub());
+
+         if (SupplementalContentStub.HasValue())
+         {
+            Pages.Add(SupportiveContentHomepage());
+         }
+
          SendToConsole($"Found {Pages.Count} pages", ConsoleColor.Green);
       }
 
-      private PageListEntry MainContentStub()
+      private PageListEntry MainContentHomepage()
       {
          return new PageListEntry
          {
             ContentRole = "Main content",
-            Level1 = "Main content",
-            Title = "Main Content",
+            Title = MainContentStub,
             Weight = 1,
             DocDescription = "This area contains the main content of the site typically found in the main navigation of the DevDocs site.",
             InPhase1 = "yes",
-            IsStub = true,
             ContentType = "Not applicable"
          };
       }
 
-      private PageListEntry SupportiveContentStub()
+      private PageListEntry SupportiveContentHomepage()
       {
          return new PageListEntry
          {
             ContentRole = "Supportive content",
-            Level1 = "Supportive content",
-            Title = "Supportive Content",
+            Title = SupplementalContentStub,
             Weight = 1000,
             DocDescription = "This area contains secondary content typically not found in the main navigation of the DevDocs site.",
             InPhase1 = "yes",
-            IsStub = true,
             ContentType = "Not applicable"
          };
       }
@@ -252,7 +267,7 @@ namespace TextTools.CommandHandlers
          return Directory.CreateDirectory(contentDirectoryPath);
       }
 
-      private string GeneratePageContents(PageListEntry p, bool hideUnderContentRoleStub)
+      private string GeneratePageContents(PageListEntry p, string navRootDirectory)
       {
          StringBuilder contents = new();
 
@@ -264,10 +279,10 @@ namespace TextTools.CommandHandlers
          contents.AppendLine($"alwaysopen = false");
          contents.AppendLine("+++");
          contents.AppendLine();
-         contents.AppendLine($"## {p.Title}");
+         contents.AppendLine($"## {(p.ContentRole == "Home page" ? "Welcome to the IA Prototype" : p.Title)}");
          contents.AppendLine();
 
-         contents.AppendLine($"[Click here to give feedback about this page]({GenerateFeedbackURL(p.GetAbsolutePageFilePath(ContentDirectory, hideUnderContentRoleStub).FullName)})");
+         contents.AppendLine($"[Click here to give feedback about this page]({GenerateFeedbackURL(p.GetAbsolutePageFilePath(ContentDirectory, navRootDirectory).FullName)})");
          contents.AppendLine();
 
          if (p.ContentRole == "Home page")
@@ -324,7 +339,9 @@ namespace TextTools.CommandHandlers
             var targetPages = Pages.Where(p => p.Id == pageID);
             if (targetPages.Any())
             {
-               uncheckedText = uncheckedText.Replace(idString, $"[{idString}](/{targetPages.First().GetRelativeFilePath(StubMainContent).Replace("\\", "/")})");
+               var target = targetPages.First();
+               string navRootDirectory = target.ContentRole == "Main content" ? MainContentStub : SupplementalContentStub;
+               uncheckedText = uncheckedText.Replace(idString, $"[{idString}](/{target.GetRelativeFilePath(navRootDirectory).Replace("\\", "/")})");
             }
          }
 

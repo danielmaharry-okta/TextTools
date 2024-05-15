@@ -169,27 +169,21 @@ namespace TextTools
       /// Calculates the absolute file path for the page
       /// </summary>
       /// <param name="baseDirectory"></param>
-      /// <param name="hideUnderContentRoleStub">Whether to add an additional directory set to the name of the page's content type to hide it in the nav</param>
-      /// <returns></returns>
-      public FileInfo GetAbsolutePageFilePath(DirectoryInfo baseDirectory, bool hideUnderContentRoleStub)
+      /// <param name="navRootDirectory">The name of an additional directory to place the file inside.</param>
+      /// <returns>The absolute file path for the page</returns>
+      public FileInfo GetAbsolutePageFilePath(DirectoryInfo baseDirectory, string navRootDirectory)
       {
-         var filePath = GetRelativeFilePath(false);
-
-         if (hideUnderContentRoleStub && !IsStub)
-         {
-            filePath = Path.Combine(ContentRole.Trim(), filePath).AsSafeFileName();
-         }
-
-         return new FileInfo(Path.Combine(baseDirectory.FullName, filePath));
+         return new FileInfo(Path.Combine(baseDirectory.FullName, GetRelativeFilePath(navRootDirectory)));
       }
 
       /// <summary>
       /// Calculates the relative file path for the page
       /// </summary>
-      /// <returns></returns>
-      public string GetRelativeFilePath(bool AddMainContentStub)
+      /// <param name="navRootDirectory">The name of an additional directory to place the file inside.</param>
+      /// <returns>The path of the file relative to the root of the content</returns>
+      public string GetRelativeFilePath(string navRootDirectory)
       {
-         return Path.Combine(AddMainContentStub ? ContentRole : string.Empty, Level1.Trim(), Level2.Trim(), Level3.Trim(), Level4.Trim(), Level5.Trim(), Level6.Trim(), "_index.md").AsSafeFileName();
+         return Path.Combine(navRootDirectory.Trim(), Level1.Trim(), Level2.Trim(), Level3.Trim(), Level4.Trim(), Level5.Trim(), Level6.Trim(), "_index.md").AsSafeFileName();
       }
 
       /// <summary>
