@@ -221,7 +221,8 @@ namespace TextTools.CommandHandlers
             Weight = 1,
             DocDescription = "This area contains the main content of the site typically found in the main navigation of the DevDocs site.",
             InPhase1 = "yes",
-            IsStub = true
+            IsStub = true,
+            ContentType = "Not applicable"
          };
       }
 
@@ -235,7 +236,8 @@ namespace TextTools.CommandHandlers
             Weight = 1000,
             DocDescription = "This area contains secondary content typically not found in the main navigation of the DevDocs site.",
             InPhase1 = "yes",
-            IsStub = true
+            IsStub = true,
+            ContentType = "Not applicable"
          };
       }
 
@@ -274,9 +276,9 @@ namespace TextTools.CommandHandlers
             return contents.ToString();
          }
 
-         AddIfItHasAValue(contents, "In Phase 1?", p.InPhase1);
-         AddIfItHasAValue(contents, "In Phase 2?", p.InPhase2);
-         AddIfItHasAValue(contents, "Related to help docs?", p.HelpDocsScope);
+         // AddIfItHasAValue(contents, "In Phase 1?", p.InPhase1);
+         // AddIfItHasAValue(contents, "In Phase 2?", p.InPhase2);
+         // AddIfItHasAValue(contents, "Related to help docs?", p.HelpDocsScope);
          contents.AppendLine();
 
          if (p.GroupDescription.HasValue())
@@ -287,13 +289,13 @@ namespace TextTools.CommandHandlers
 
          contents.AppendLine();
          contents.AppendLine("### Content Notes").AppendLine();
-         AddIfItHasAValue(contents, "New or existing doc?", p.DocumentType);
+         // AddIfItHasAValue(contents, "New or existing doc?", p.DocumentType);
          AddIfItHasAValue(contents, "Target personas", p.TargetPersonas);
-         AddIfItHasAValue(contents, "Dimensioned by", p.Dimensions, "No doc dimension");
+         // AddIfItHasAValue(contents, "Dimensioned by", p.Dimensions, "No doc dimension");
          AddIfItHasAValue(contents, "Description", p.DocDescription);
          AddIfItHasAValue(contents, "Changes to be made", p.SuggestedChanges);
          AddIfItHasAValue(contents, "Links to original docs", p.ExistingLinks);
-         AddIfItHasAValue(contents, "Validation", p.Validation);
+         AddIfItHasAValue(contents, "Why is this here?", p.Validation);
          contents.AppendLine($"**Content type: {p.ContentType.Trim()}**").AppendLine();
          contents.AppendLine(GetContentTypeDescription(p.ContentType));
          contents.AppendLine();
@@ -367,7 +369,7 @@ namespace TextTools.CommandHandlers
          contents.AppendLine("Here's what we need from you:");
          contents.AppendLine("* Dive into the navigation menu to explore the proposed groupings and item placements.");
          contents.AppendLine("* Reflect on the clarity and intuitiveness of these new groupings and the ease of navigation. Consider how the new structure aligns with your expectations and needs.");
-         contents.AppendLine("* Share your invaluable feedback using the [IA Prototype v2 feedback spreadsheet](https://docs.google.com/spreadsheets/d/1wsnbNcJdPsxHszTYzDEPYj4ZUEyJs_YGtRgUdsSruZU/edit#gid=375236245). Your insights on the new IA, document placements, and any additional attributes are crucial for refining our documentation site.");
+         contents.AppendLine("* Share your invaluable feedback using the feedback links at the top of every page. You'll be taken to a Google Form to share your thoughts. Your insights on the new IA, document placements, and any additional attributes are crucial for refining our documentation site.");
          contents.AppendLine();
          contents.AppendLine("Your feedback is pivotal in crafting a documentation site that is informative, easily navigable, and intuitive. We thank you in advance for your time and thoughtful contributions.");
          return;
