@@ -81,12 +81,12 @@ namespace TextTools.CommandBuilders
          );
          contentTypesOption.AddAlias("--ct");
 
-         var mainContentOnlyOption = new Option<bool>(
-            name: "--mainContentOnly",
+         var showSupplementalContentOption = new Option<bool>(
+            name: "--showSupplementalContent",
             getDefaultValue: () => false,
-            description: "Show main content only in the build"
+            description: "Show supplemental content in the build"
          );
-         mainContentOnlyOption.AddAlias("--mco");
+         showSupplementalContentOption.AddAlias("--ssc");
 
          var numberOfLevelsOption = new Option<int>(
             name: "--numberOfLevels",
@@ -104,15 +104,15 @@ namespace TextTools.CommandBuilders
 
          iaProtoCommand.AddOption(pagelistOption);
          iaProtoCommand.AddOption(contentTypesOption);
-         iaProtoCommand.AddOption(mainContentOnlyOption);
+         iaProtoCommand.AddOption(showSupplementalContentOption);
          iaProtoCommand.AddOption(numberOfLevelsOption);
          iaProtoCommand.AddOption(targetUrlRootOption);
          iaProtoCommand.SetHandler(
-            (reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption, targetUrlRootOption) =>
+            (reportCommandBaseOptions, pagelistOption, contentTypesOption, showSupplementalContentOption, numberOfLevelsOption, targetUrlRootOption) =>
             {
-               IaProtoCommandHandler ipHandler = new IaProtoCommandHandler(reportCommandBaseOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption, targetUrlRootOption);
+               IaProtoCommandHandler ipHandler = new IaProtoCommandHandler(reportCommandBaseOptions, pagelistOption, contentTypesOption, showSupplementalContentOption, numberOfLevelsOption, targetUrlRootOption);
                ipHandler.Go();
-            }, coreOptions, pagelistOption, contentTypesOption, mainContentOnlyOption, numberOfLevelsOption, targetUrlRootOption
+            }, coreOptions, pagelistOption, contentTypesOption, showSupplementalContentOption, numberOfLevelsOption, targetUrlRootOption
          );
 
          return iaProtoCommand;

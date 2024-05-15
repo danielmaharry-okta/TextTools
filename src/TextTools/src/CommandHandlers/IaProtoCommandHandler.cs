@@ -27,14 +27,14 @@ namespace TextTools.CommandHandlers
       /// <param name="coreOptions">The core report handler options</param>
       /// <param name="pageListFile">The page list spreadsheet as a csv file</param>
       /// <param name="contentTypesFile">The content types list as a csv file</param>
-      /// <param name="mainContentOnly">Whether to include only main content in the build</param>
+      /// <param name="showSupplementalContent">Whether to include supplemental content in the build</param>
       /// <param name="numberOfLevels">The number of nav levels to include in the build</param>
       /// <param name="targetRootUrl">The root URL of the live prototype site</param>
-      public IaProtoCommandHandler(ReportCommandBaseOptions coreOptions, FileInfo pageListFile, FileInfo contentTypesFile, bool mainContentOnly, int numberOfLevels, string targetRootUrl) : base(coreOptions)
+      public IaProtoCommandHandler(ReportCommandBaseOptions coreOptions, FileInfo pageListFile, FileInfo contentTypesFile, bool showSupplementalContent, int numberOfLevels, string targetRootUrl) : base(coreOptions)
       {
          PageListFileInfo = pageListFile;
          ContentTypeFileInfo = contentTypesFile;
-         MainContentOnly = mainContentOnly;
+         ShowSupplementalContent = showSupplementalContent;
          NumberOfLevels = numberOfLevels;
          TargetRootUrl = targetRootUrl;
       }
@@ -50,9 +50,9 @@ namespace TextTools.CommandHandlers
       public FileInfo ContentTypeFileInfo { get; set; } = new FileInfo(@"c:\temp\contenttypes.csv");
 
       /// <summary>
-      ///  Gets or sets whether only main content should be included in the build
+      ///  Gets or sets whether supplemental content should be included in the build
       /// </summary>
-      public bool MainContentOnly { get; set; } = false;
+      public bool ShowSupplementalContent { get; set; } = false;
 
       /// <summary>
       /// Gets or sets the number of nav levels to include in the build
@@ -101,7 +101,7 @@ namespace TextTools.CommandHandlers
             return false;
          }
 
-         SendToConsole($"Exclude secondary content: {MainContentOnly}", ConsoleColor.Yellow);
+         SendToConsole($"Show secondary content: {ShowSupplementalContent}", ConsoleColor.Yellow);
          SendToConsole($"Number of levels: {NumberOfLevels}", ConsoleColor.Yellow);
          SendToConsole($"Root URL: {TargetRootUrl}", ConsoleColor.Yellow);
 
@@ -126,7 +126,7 @@ namespace TextTools.CommandHandlers
          BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Home page"), false);
          BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Main content"), StubMainContent);
 
-         if (!MainContentOnly)
+         if (ShowSupplementalContent)
          {
             BuildPageSection(ContentDirectory, fileReport, Pages.Where(p => p.ContentRole == "Supportive content"), true);
          }
