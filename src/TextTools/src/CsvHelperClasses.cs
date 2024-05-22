@@ -80,6 +80,13 @@ namespace TextTools
       [Name("Content Type")]
       public string ContentType { get; set; } = "Unknown";
 
+
+      /// <summary>
+      /// Gets or sets the page's structure type
+      /// </summary>
+      [Name("Structure Type")]
+      public string StructureType { get; set; } = "Unknown";
+
       /// <summary>
       /// Gets or sets the page's keywords
       /// </summary>

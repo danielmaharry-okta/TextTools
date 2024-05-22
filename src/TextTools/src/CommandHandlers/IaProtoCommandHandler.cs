@@ -31,8 +31,8 @@ namespace TextTools.CommandHandlers
       /// <param name="targetRootUrl">The root URL of the live prototype site</param>
       /// <param name="mainContentStub">The root folder name for all main content</param>
       /// <param name="supplementalContentStub">The root folder name for all main content</param>
-      public IaProtoCommandHandler(ReportCommandBaseOptions coreOptions, FileInfo pageListFile, FileInfo contentTypesFile, 
-         bool showSupplementalContent, int numberOfLevels, string targetRootUrl, string mainContentStub, string supplementalContentStub) : base(coreOptions)
+      public IaProtoCommandHandler(ReportCommandBaseOptions coreOptions, FileInfo pageListFile, FileInfo contentTypesFile, bool showSupplementalContent, 
+         int numberOfLevels, string targetRootUrl, string mainContentStub, string supplementalContentStub) : base(coreOptions)
       {
          PageListFileInfo = pageListFile;
          ContentTypeFileInfo = contentTypesFile;
@@ -79,6 +79,11 @@ namespace TextTools.CommandHandlers
       public string SupplementalContentStub { get; set; } = string.Empty;
 
       /// <summary>
+      /// Gets or sets the current version number of the site
+      /// </summary>
+      public string VersionNumber { get; init; } = "v2-b1";
+
+      /// <summary>
       /// Gets or sets a list of all defined content types.
       /// </summary>
       public List<ContentType> ContentTypes { get; set; } = [];
@@ -90,7 +95,7 @@ namespace TextTools.CommandHandlers
 
       private DirectoryInfo ContentDirectory { get; set; } = new DirectoryInfo(@"c:\temp");
 
-      private readonly string FeedbackFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdwubXc5pUELg1L5B7qKjyS1_vnfB-2kALIAJOqwoUQjVUHBA/viewform?usp=pp_url&entry.395545573=PAGE_URL";
+      private readonly string FeedbackFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdwubXc5pUELg1L5B7qKjyS1_vnfB-2kALIAJOqwoUQjVUHBA/viewform?usp=pp_url&entry.395545573=PAGE_URL&entry.549860695=VERSION_NUMBER";
 
       /// <inheritdoc />
       protected override bool ValidateNonCoreOptions()
@@ -279,7 +284,7 @@ namespace TextTools.CommandHandlers
          contents.AppendLine($"alwaysopen = false");
          contents.AppendLine("+++");
          contents.AppendLine();
-         contents.AppendLine($"## {(p.ContentRole == "Home page" ? "Welcome to the IA Prototype" : p.Title)}");
+         contents.AppendLine($"## {(p.ContentRole == "Home page" ? "developer.okta.com Navigation prototype " + VersionNumber : p.Title)}");
          contents.AppendLine();
 
          contents.AppendLine($"[Click here to give feedback about this page]({GenerateFeedbackURL(p.GetAbsolutePageFilePath(ContentDirectory, navRootDirectory).FullName)})");
@@ -311,6 +316,7 @@ namespace TextTools.CommandHandlers
          AddIfItHasAValue(contents, "Changes to be made", p.SuggestedChanges);
          AddIfItHasAValue(contents, "Links to original docs", p.ExistingLinks);
          AddIfItHasAValue(contents, "Why is this here?", p.Validation);
+         AddIfItHasAValue(contents, "Structure type", p.StructureType);
          contents.AppendLine($"**Content type: {p.ContentType.Trim()}**").AppendLine();
          contents.AppendLine(GetContentTypeDescription(p.ContentType));
          contents.AppendLine();
@@ -321,7 +327,7 @@ namespace TextTools.CommandHandlers
       private string GenerateFeedbackURL(string absoluteFilePath)
       {
          string absoluteUrl = absoluteFilePath.Replace(ContentDirectory.FullName, TargetRootUrl).Replace("\\", "/").Replace("_index.md", string.Empty);
-         return FeedbackFormURL.Replace("PAGE_URL", HttpUtility.HtmlEncode(absoluteUrl));
+         return FeedbackFormURL.Replace("PAGE_URL", HttpUtility.HtmlEncode(absoluteUrl)).Replace("VERSION_NUMBER", VersionNumber);
       }
 
       // Finds any instance of the string ID: xxx and adds a link to the page with that internal ID number.
@@ -379,16 +385,26 @@ namespace TextTools.CommandHandlers
 
       private void AddHomePageIntro(StringBuilder contents)
       {
-         contents.AppendLine("Welcome to our Developer Documentation Information Architecture (IA) Prototype! We're on a mission to elevate your experience by unveiling a redesigned structure that makes finding and utilizing our resources more intuitive.");
+         contents.AppendLine("**Please give us your feedback** on the redesigned navigation system for the developer documentation website.");
          contents.AppendLine();
-         contents.AppendLine("This prototype website serves as a visual guide to our proposed new IA groupings, showcasing how documents are categorized and how you can navigate through them. As you explore, you'll encounter placeholders for both existing and newly proposed documentation, complete with details on content type, document titles, user research validation, and more. While the actual documents are not hosted here, links to the existing content on our current developer site are provided for your reference.");
+         contents.AppendLine("The goal is a task-based navigation that makes it easier for developers to find the content they're looking for… the answer to their question. We've biased the design to developers inexperienced with Identity and Access Management.");
          contents.AppendLine();
-         contents.AppendLine("Here's what we need from you:");
-         contents.AppendLine("* Dive into the navigation menu to explore the proposed groupings and item placements.");
-         contents.AppendLine("* Reflect on the clarity and intuitiveness of these new groupings and the ease of navigation. Consider how the new structure aligns with your expectations and needs.");
-         contents.AppendLine("* Share your invaluable feedback using the feedback links at the top of every page. You'll be taken to a Google Form to share your thoughts. Your insights on the new IA, document placements, and any additional attributes are crucial for refining our documentation site.");
+         contents.AppendLine("To leave feedback, click the large feedback link at the top of each page. On the Google form that appears, please share feedback on:");
+         contents.AppendLine("* Navigation menu titles");
+         contents.AppendLine("* The usefulness of the titles to finding your answer");
+         contents.AppendLine("* Groupings of concepts at levels 1 and 2");
+         contents.AppendLine("* anything else");
          contents.AppendLine();
-         contents.AppendLine("Your feedback is pivotal in crafting a documentation site that is informative, easily navigable, and intuitive. We thank you in advance for your time and thoughtful contributions.");
+         contents.AppendLine("Consider setting yourself a coding or conceptual question and then trying to find the answer by clicking through the navigation menu. As you click through the menu, the content on the right shows information about the menu item: who the page is for (Target personas), links to the current pages it maps to, and other information.");
+         contents.AppendLine();
+         contents.AppendLine("For example, can you find the page to answer these questions:");
+         contents.AppendLine("* What are OAuth and OIDC in identity and access management?");
+         contents.AppendLine("* What is the Okta Integration Network (OIN)?");
+         contents.AppendLine("* How do I add Google Authenticator as an authentication factor to my web app?");
+         contents.AppendLine("* How do I customize the sign-in widget?");
+         contents.AppendLine("* How do I get started with the Okta Terraform provider?");
+         contents.AppendLine("* How do I submit my app to the OIN?");
+         contents.AppendLine("* How do I find a list of the endpoints for an API?");
          return;
       }
    }
