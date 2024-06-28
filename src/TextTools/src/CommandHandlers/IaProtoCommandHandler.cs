@@ -81,7 +81,7 @@ namespace TextTools.CommandHandlers
       /// <summary>
       /// Gets or sets the current version number of the site
       /// </summary>
-      public string VersionNumber { get; init; } = "v2-b1";
+      public string VersionNumber { get; init; } = "v2";
 
       /// <summary>
       /// Gets or sets a list of all defined content types.
