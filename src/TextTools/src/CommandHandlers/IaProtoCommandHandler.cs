@@ -278,7 +278,7 @@ namespace TextTools.CommandHandlers
 
          // header section
          contents.AppendLine("+++");
-         contents.AppendLine($"title = '{p.GetNavTitle().Replace("'", string.Empty)}'");
+         contents.AppendLine($"title = '{p.GetNavTitle().Replace("'", "’")}'");
          contents.AppendLine($"date = {DateTime.Now.ToLongTimeString()}");
          contents.AppendLine($"weight = {p.Weight}");
          contents.AppendLine($"alwaysopen = false");
@@ -317,8 +317,7 @@ namespace TextTools.CommandHandlers
          AddIfItHasAValue(contents, "Links to original docs", p.ExistingLinks);
          AddIfItHasAValue(contents, "Why is this here?", p.Validation);
          AddIfItHasAValue(contents, "Structure type", p.StructureType);
-         contents.AppendLine($"**Content type: {p.ContentType.Trim()}**").AppendLine();
-         contents.AppendLine(GetContentTypeDescription(p.ContentType));
+         contents.AppendLine($"**Content type:** {GetContentTypeDescription(p.ContentType)}");
          contents.AppendLine();
 
          return FindAndLinkInternalIDs(contents);
@@ -327,7 +326,7 @@ namespace TextTools.CommandHandlers
       private string GenerateFeedbackURL(string absoluteFilePath)
       {
          string absoluteUrl = absoluteFilePath.Replace(ContentDirectory.FullName, TargetRootUrl).Replace("\\", "/").Replace("_index.md", string.Empty);
-         return FeedbackFormURL.Replace("PAGE_URL", HttpUtility.HtmlEncode(absoluteUrl)).Replace("VERSION_NUMBER", VersionNumber);
+         return FeedbackFormURL.Replace("PAGE_URL", HttpUtility.HtmlEncode(absoluteUrl)).Replace("VERSION_NUMBER", VersionNumber).ToLowerInvariant();
       }
 
       // Finds any instance of the string ID: xxx and adds a link to the page with that internal ID number.
@@ -354,15 +353,18 @@ namespace TextTools.CommandHandlers
          return uncheckedText;
       }
 
-      private string? GetContentTypeDescription(string contentType)
+      private string GetContentTypeDescription(string contentType)
       {
          var cts = ContentTypes.Where(ct => ct.Name == contentType);
-         if (cts.Any())
+         if (cts.None())
          {
-            return cts.First().Description;
+            return "Unknown";
          }
 
-         return "Unknown";
+         StringBuilder sb = new StringBuilder($"[{cts.First().Name}]({cts.First().ConfluenceUrl})");
+         sb.AppendLine();
+         sb.AppendLine(cts.First().Description.Trim());
+         return sb.ToString();
       }
 
       private void AddIfItHasAValue(StringBuilder contents, string name, string value, string nameToIgnore)

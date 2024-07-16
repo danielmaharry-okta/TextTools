@@ -224,5 +224,11 @@ namespace TextTools
       /// </summary>
       [Name("External links")]
       public string ExternalLinks { get; set; } = string.Empty;
+
+      /// <summary>
+      /// Gets or sets the confluence URL to the page describing the content type.
+      /// </summary>
+      [Name("Confluence URL")]
+      public string ConfluenceUrl { get; set; } = "https://oktawiki.atlassian.net/wiki/spaces/DCS/pages/2992869073/Content+Types";
    }
 }
