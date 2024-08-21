@@ -81,7 +81,7 @@ namespace TextTools.CommandHandlers
       /// <summary>
       /// Gets or sets the current version number of the site
       /// </summary>
-      public string VersionNumber { get; init; } = "v2.01";
+      public string VersionNumber { get; init; } = "v2.1";
 
       /// <summary>
       /// Gets or sets a list of all defined content types.
@@ -95,7 +95,7 @@ namespace TextTools.CommandHandlers
 
       private DirectoryInfo ContentDirectory { get; set; } = new DirectoryInfo(@"c:\temp");
 
-      private readonly string FeedbackFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdwubXc5pUELg1L5B7qKjyS1_vnfB-2kALIAJOqwoUQjVUHBA/viewform?usp=pp_url&entry.395545573=PAGE_URL&entry.549860695=VERSION_NUMBER";
+      private readonly string FeedbackFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdwubXc5pUELg1L5B7qKjyS1_vnfB-2kALIAJOqwoUQjVUHBA/viewform?usp=pp_url&entry.276608427=ID&entry.395545573=PAGE_URL&entry.549860695=VERSION_NUMBER";
 
       /// <inheritdoc />
       protected override bool ValidateNonCoreOptions()
@@ -287,7 +287,7 @@ namespace TextTools.CommandHandlers
          contents.AppendLine($"## {(p.ContentRole == "Home page" ? "developer.okta.com Navigation prototype " + VersionNumber : p.Title)}");
          contents.AppendLine();
 
-         contents.AppendLine($"[Click here to give feedback about this page]({GenerateFeedbackURL(p.GetAbsolutePageFilePath(ContentDirectory, navRootDirectory).FullName)})");
+         contents.AppendLine($"[Click here to give feedback about this page]({GenerateFeedbackURL(p.GetAbsolutePageFilePath(ContentDirectory, navRootDirectory).FullName, p.Id)})");
          contents.AppendLine();
 
          if (p.ContentRole == "Home page")
@@ -303,30 +303,32 @@ namespace TextTools.CommandHandlers
 
          if (p.GroupDescription.HasValue())
          {
-            contents.AppendLine("### Group Notes").AppendLine();
-            contents.AppendLine($"**Group description**: {p.GroupDescription}");
+            contents.AppendLine("### Section Notes").AppendLine();
+            contents.AppendLine(p.GroupDescription);
          }
 
          contents.AppendLine();
-         contents.AppendLine("### Content Notes").AppendLine();
-         // AddIfItHasAValue(contents, "New or existing doc?", p.DocumentType);
-         AddIfItHasAValue(contents, "Target personas", p.TargetPersonas);
+         contents.AppendLine("### About This Page").AppendLine();
+         AddIfItHasAValue(contents, "Page ID", p.Id);
+         AddIfItHasAValue(contents, "Is this a new page?", p.DocumentType);
+         AddIfItHasAValue(contents, "Target personas", p.TargetPersonas.Replace(",", ", "));
          // AddIfItHasAValue(contents, "Dimensioned by", p.Dimensions, "No doc dimension");
          AddIfItHasAValue(contents, "Description", p.DocDescription);
          AddIfItHasAValue(contents, "Changes to be made", p.SuggestedChanges);
-         AddIfItHasAValue(contents, "Links to original docs", p.ExistingLinks);
-         AddIfItHasAValue(contents, "Why is this here?", p.Validation);
-         AddIfItHasAValue(contents, "Structure type", p.StructureType);
-         contents.AppendLine($"**Content type:** {GetContentTypeDescription(p.ContentType)}");
+         AddIfItHasAValue(contents, "Links to original docs", p.ExistingLinks, string.Empty, true);
+         AddIfItHasAValue(contents, "Why is this here?", p.Validation, string.Empty, true);
+         AddIfItHasAValue(contents, "Page type", p.StructureType);
+         contents.AppendLine($"**Content type:** {GetContentTypeLink(p.ContentType)}");
          contents.AppendLine();
+         contents.AppendLine(GetContentTypeDescription(p.ContentType));
 
          return FindAndLinkInternalIDs(contents);
       }
 
-      private string GenerateFeedbackURL(string absoluteFilePath)
+      private string GenerateFeedbackURL(string absoluteFilePath, string pageID)
       {
          string absoluteUrl = absoluteFilePath.Replace(ContentDirectory.FullName, TargetRootUrl).Replace("\\", "/").Replace("_index.md", string.Empty);
-         return FeedbackFormURL.Replace("PAGE_URL", HttpUtility.HtmlEncode(absoluteUrl)).Replace("VERSION_NUMBER", VersionNumber).ToLowerInvariant();
+         return FeedbackFormURL.Replace("PAGE_URL", HttpUtility.HtmlEncode(absoluteUrl).ToLowerInvariant()).Replace("VERSION_NUMBER", VersionNumber).Replace("ID", pageID);
       }
 
       // Finds any instance of the string ID: xxx and adds a link to the page with that internal ID number.
@@ -353,6 +355,17 @@ namespace TextTools.CommandHandlers
          return uncheckedText;
       }
 
+      private string GetContentTypeLink(string contentType)
+      {
+         var cts = ContentTypes.Where(ct => ct.Name == contentType);
+         if (cts.None())
+         {
+            return "Unknown";
+         }
+
+         return $"[{cts.First().Name}]({cts.First().ConfluenceUrl})";
+      }
+
       private string GetContentTypeDescription(string contentType)
       {
          var cts = ContentTypes.Where(ct => ct.Name == contentType);
@@ -361,13 +374,10 @@ namespace TextTools.CommandHandlers
             return "Unknown";
          }
 
-         StringBuilder sb = new StringBuilder($"[{cts.First().Name}]({cts.First().ConfluenceUrl})");
-         sb.AppendLine();
-         sb.AppendLine(cts.First().Description.Trim());
-         return sb.ToString();
+         return cts.First().Description.Trim();
       }
 
-      private void AddIfItHasAValue(StringBuilder contents, string name, string value, string nameToIgnore)
+      private void AddIfItHasAValue(StringBuilder contents, string name, string value, string nameToIgnore, bool contentOnNewLine)
       {
          if (string.IsNullOrWhiteSpace(value) || value.Trim() == nameToIgnore.Trim())
          {
@@ -375,14 +385,22 @@ namespace TextTools.CommandHandlers
          }
 
          string undashedContent = value.EndsWith("- ") ? value.Remove(value.Length - 2) : value;
+         string unquotedContent = undashedContent.StartsWith("'") ? undashedContent.Substring(1) : undashedContent;
 
-         contents.AppendLine($"**{name}**: {undashedContent.Trim()}").AppendLine();
+         contents.AppendLine($"**{name}**: ");
+
+         if (contentOnNewLine)
+         {
+            contents.AppendLine();
+         }
+
+         contents.AppendLine($"{unquotedContent.Trim()}").AppendLine();
          return;
       }
 
       private void AddIfItHasAValue(StringBuilder contents, string name, string value)
       {
-         AddIfItHasAValue(contents, name, value, string.Empty);
+         AddIfItHasAValue(contents, name, value, string.Empty, false);
       }
 
       private void AddHomePageIntro(StringBuilder contents)
@@ -391,11 +409,15 @@ namespace TextTools.CommandHandlers
          contents.AppendLine();
          contents.AppendLine("The goal is a task-based navigation that makes it easier for developers to find the content they're looking for… the answer to their question. We've biased the design to developers inexperienced with Identity and Access Management.");
          contents.AppendLine();
+        contents.AppendLine("**Please do NOT give us your feedback** on the design and visuals of this prototype or its lack of actual documentation. A new design is being worked on elsewhere and reworked content will appear in due course.");
+         contents.AppendLine();
          contents.AppendLine("To leave feedback, click the large feedback link at the top of each page. On the Google form that appears, please share feedback on:");
          contents.AppendLine("* Navigation menu titles");
          contents.AppendLine("* The usefulness of the titles to finding your answer");
          contents.AppendLine("* Groupings of concepts at levels 1 and 2");
-         contents.AppendLine("* anything else");
+         contents.AppendLine("* Anything else that seems relevant");
+         contents.AppendLine();
+         contents.AppendLine("We'll randomly pick four people who gave feedback and award them 25 Oktappreciate points at the end of the feedback cycle on September 20!");
          contents.AppendLine();
          contents.AppendLine("Consider setting yourself a coding or conceptual question and then trying to find the answer by clicking through the navigation menu. As you click through the menu, the content on the right shows information about the menu item: who the page is for (Target personas), links to the current pages it maps to, and other information.");
          contents.AppendLine();
