@@ -25,6 +25,14 @@ namespace TextTools
       /// </summary>
       /// <param name="s"></param>
       /// <returns>true if it has contents, false if null</returns>
-      public static bool HasValue(this string s) => !String.IsNullOrWhiteSpace(s);
+      public static bool HasValue(this string s)
+      {
+         if (s is null)
+         {
+            return false;
+         }
+
+         return !string.IsNullOrWhiteSpace(s);
+      }
    }
 }

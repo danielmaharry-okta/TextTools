@@ -163,10 +163,11 @@ namespace TextTools.CommandHandlers
 
             try
             {
-               if (!Directory.Exists(pageFile.DirectoryName) && pageFile.DirectoryName.HasValue())
-               {
-                  Directory.CreateDirectory(pageFile.DirectoryName);
-               }
+                  if (!Directory.Exists(pageFile.DirectoryName))
+                  {
+                     string dirName = string.IsNullOrWhiteSpace(pageFile.DirectoryName) ? "temp" : pageFile.DirectoryName;
+                     Directory.CreateDirectory(dirName);
+                  }
 
                if (pageFile.Exists)
                {
