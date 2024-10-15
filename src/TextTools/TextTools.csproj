@@ -8,7 +8,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>..\..\docs\xml\TextTools.xml</DocumentationFile>
     <IsTestProject>false</IsTestProject>
-    <PublishTrimmed>true</PublishTrimmed>
+    <PublishTrimmed>false</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
   <ItemGroup>
@@ -18,6 +18,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
-    <PackageReference Include="CsvHelper" Version="31.0.2"/>
+    <PackageReference Include="CsvHelper" Version="33.0.1"/>
   </ItemGroup>
 </Project>
