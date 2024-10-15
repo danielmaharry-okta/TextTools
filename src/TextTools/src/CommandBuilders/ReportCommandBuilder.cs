@@ -137,5 +137,53 @@ namespace TextTools.CommandBuilders
 
          return iaProtoCommand;
       }
+
+      internal Command BuildBetaSiteSubCommand()
+      {
+         var betaSiteCommand = new Command("betasite", "Builds a skeleton vuepress beta site matching the IA spreadsheet");
+         var coreOptions = CreateAndAddCoreReportCommandOptions(betaSiteCommand, "*.csv");
+         var pagelistOption = new Option<FileInfo>(
+            name: "--pagelist",
+            getDefaultValue: () => new FileInfo(@"c:\temp\pagelist.csv"),
+            description: "Page list csv file saved from airtable"
+         );
+         pagelistOption.AddAlias("--pl");
+
+         var contentTypesOption = new Option<FileInfo>(
+            name: "--contenttypes",
+            getDefaultValue: () => new FileInfo(@"c:\temp\contenttypes.csv"),
+            description: "Content types csv file saved from airtable"
+         );
+         contentTypesOption.AddAlias("--ct");
+
+         var showSupplementalContentOption = new Option<bool>(
+            name: "--showSupplementalContent",
+            getDefaultValue: () => false,
+            description: "Show supplemental content in the build"
+         );
+         showSupplementalContentOption.AddAlias("--ssc");
+
+         var numberOfLevelsOption = new Option<int>(
+            name: "--numberOfLevels",
+            getDefaultValue: () => 6,
+            description: "Number of nav levels to include in the build, from 1 to 6"
+         );
+         numberOfLevelsOption.AddAlias("--lvl");
+
+         betaSiteCommand.AddOption(pagelistOption);
+         betaSiteCommand.AddOption(contentTypesOption);
+         betaSiteCommand.AddOption(showSupplementalContentOption);
+         betaSiteCommand.AddOption(numberOfLevelsOption);
+         betaSiteCommand.SetHandler(
+            (reportCommandBaseOptions, pagelistOption, contentTypesOption, showSupplementalContentOption, numberOfLevelsOption) =>
+            {
+               BetaSiteCommandHandler bsHandler = new BetaSiteCommandHandler(
+                  reportCommandBaseOptions, pagelistOption, contentTypesOption, showSupplementalContentOption, numberOfLevelsOption);
+               bsHandler.Go();
+            }, coreOptions, pagelistOption, contentTypesOption, showSupplementalContentOption, numberOfLevelsOption
+         );
+
+         return betaSiteCommand;
+      }
    }
 }

@@ -25,6 +25,7 @@ namespace TextTools.CommandBuilders
          rootCommand.Add(rcb.BuildMatchListSubCommand());
          rootCommand.Add(rcb.BuildIAAuditSubCommand());
          rootCommand.Add(rcb.BuildIAProtoSubCommand());
+         rootCommand.Add(rcb.BuildBetaSiteSubCommand());
          return rootCommand;
       }
    }
