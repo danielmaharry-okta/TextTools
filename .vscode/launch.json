@@ -12,8 +12,9 @@
          // If you have changed target frameworks, make sure to update the program path.
          "program": "${workspaceFolder}/src/TextTools/bin/Debug/net8.0/TextTools.dll",
          "args": [
-            "iaproto",
-            "--pl=c:\\temp\\suplist.csv"
+            "betasite",
+            "--pagelist=c:\\temp\\pagelist.csv",
+            "--contenttypes=c:\\temp\\contenttypes.csv"
          ],
          "cwd": "${workspaceFolder}/src/TextTools",
          // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
