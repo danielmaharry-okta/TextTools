@@ -140,7 +140,7 @@ namespace TextTools.CommandHandlers
             if (string.IsNullOrWhiteSpace(p.Level2))
             {
                rootEntries.Add(
-                  new NavbarEntry { Title = p.GetNavTitle(), Path = relativePath }
+                  new NavbarEntry { Title = p.GetNavTitle(), Path = relativePath.Replace("(", string.Empty).Replace(")", string.Empty) }
                );
 
                continue;
@@ -149,7 +149,7 @@ namespace TextTools.CommandHandlers
             // if doc is level2 or deeper, find parent node and add sublink
             NavbarEntry parentNode = FindParentNode(p, rootEntries);
             parentNode.SubLinks.Add(
-               new NavbarEntry { Title = p.GetNavTitle(), Path = relativePath }
+               new NavbarEntry { Title = p.GetNavTitle(), Path = relativePath.Replace("(", string.Empty).Replace(")", string.Empty) }
             );
          }
 
@@ -289,7 +289,7 @@ namespace TextTools.CommandHandlers
             p.Level2.Trim().HasValue() ? p.Level1.Trim() : string.Empty,
             p.GetNavTitle(),
             "index.md"
-         ).AsSafeFileName();
+         ).AsSafeFileName().Replace("(", string.Empty).Replace(")", string.Empty);
          return new FileInfo(Path.Combine(baseDirectory.FullName, relativePath));
       }
 
@@ -347,9 +347,9 @@ namespace TextTools.CommandHandlers
          StringBuilder contents = new();
 
          // header section
-         contents.AppendLine("+++");
+         contents.AppendLine("---");
          contents.AppendLine($"title: {p.GetNavTitle()}");
-         contents.AppendLine("+++");
+         contents.AppendLine("---");
          contents.AppendLine();
 
          if (p.ContentRole == "Home page")
