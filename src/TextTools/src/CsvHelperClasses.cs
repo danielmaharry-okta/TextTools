@@ -15,6 +15,12 @@ namespace TextTools
       public string Id { get; set; } = "0";
 
       /// <summary>
+      /// Gets or sets the order of the pages in the left navbar
+      /// </summary>
+      [Name("Doc Order")]
+      public int DocOrder { get; set; } = 0;
+
+      /// <summary>
       /// Gets or sets the current draft status of the page in the spreadsheet
       /// </summary>
       [Name("Edit status")]
@@ -159,12 +165,6 @@ namespace TextTools
       /// </summary>
       [Name("Primary targetted personas")]
       public string TargetPersonas { get; set; } = string.Empty;
-
-      /// <summary>
-      /// Gets or sets the page's weight - it's position in the left hand menu
-      /// </summary>
-      [Ignore]
-      public int Weight { get; set; } = 0;
 
       /// <summary>
       /// Gets or sets whether the page is an artifically added stub for the nav

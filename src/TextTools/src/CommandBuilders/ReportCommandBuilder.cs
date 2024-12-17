@@ -40,13 +40,13 @@ namespace TextTools.CommandBuilders
          var coreOptions = CreateAndAddCoreReportCommandOptions(iaAuditCommand, "*.md");
          var navbarOption = new Option<FileInfo>(
             name: "-n",
-            getDefaultValue: () => new FileInfo(@"c:\temp\navbar.json"),
+            getDefaultValue: () => new FileInfo(@"c:\code\navbar.json"),
             description: "Navbar file as json"
          );
 
          var conductorOption = new Option<FileInfo>(
             name: "-c",
-            getDefaultValue: () => new FileInfo(@"c:\temp\conductor.json"),
+            getDefaultValue: () => new FileInfo(@"c:\code\conductor.json"),
             description: "Conductor file as json"
          );
 
@@ -69,14 +69,14 @@ namespace TextTools.CommandBuilders
          var coreOptions = CreateAndAddCoreReportCommandOptions(iaProtoCommand, "*.csv");
          var pagelistOption = new Option<FileInfo>(
             name: "--pagelist",
-            getDefaultValue: () => new FileInfo(@"c:\temp\pagelist.csv"),
+            getDefaultValue: () => new FileInfo(@"c:\code\pagelist.csv"),
             description: "Page list csv file saved from airtable"
          );
          pagelistOption.AddAlias("--pl");
 
          var contentTypesOption = new Option<FileInfo>(
             name: "--contenttypes",
-            getDefaultValue: () => new FileInfo(@"c:\temp\contenttypes.csv"),
+            getDefaultValue: () => new FileInfo(@"c:\code\contenttypes.csv"),
             description: "Content types csv file saved from airtable"
          );
          contentTypesOption.AddAlias("--ct");
@@ -144,14 +144,14 @@ namespace TextTools.CommandBuilders
          var coreOptions = CreateAndAddCoreReportCommandOptions(betaSiteCommand, "*.csv");
          var pagelistOption = new Option<FileInfo>(
             name: "--pagelist",
-            getDefaultValue: () => new FileInfo(@"c:\temp\pagelist.csv"),
+            getDefaultValue: () => new FileInfo(@"c:\code\pagelist.csv"),
             description: "Page list csv file saved from airtable"
          );
          pagelistOption.AddAlias("--pl");
 
          var contentTypesOption = new Option<FileInfo>(
             name: "--contenttypes",
-            getDefaultValue: () => new FileInfo(@"c:\temp\contenttypes.csv"),
+            getDefaultValue: () => new FileInfo(@"c:\code\contenttypes.csv"),
             description: "Content types csv file saved from airtable"
          );
          contentTypesOption.AddAlias("--ct");

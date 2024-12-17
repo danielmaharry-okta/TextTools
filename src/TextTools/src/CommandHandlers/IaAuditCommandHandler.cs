@@ -32,12 +32,12 @@ namespace TextTools.CommandHandlers
       /// <summary>
       /// Gets or sets the directory containing navbar.json
       /// </summary>
-      public FileInfo NavbarFileInfo { get; set; } = new FileInfo(@"c:\temp\navbar.json");
+      public FileInfo NavbarFileInfo { get; set; } = new FileInfo(@"c:\code\navbar.json");
 
       /// <summary>
       /// Gets or sets the directory containing conductor.json
       /// </summary>
-      public FileInfo ConductorFileInfo { get; set; } = new FileInfo(@"c:\temp\conductor.json");
+      public FileInfo ConductorFileInfo { get; set; } = new FileInfo(@"c:\code\conductor.json");
 
 
       /// <summary>

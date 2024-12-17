@@ -42,12 +42,12 @@ namespace TextTools.CommandHandlers
       /// <summary>
       /// Gets or sets the page list file
       /// </summary>
-      public FileInfo PageListFileInfo { get; set; } = new FileInfo(@"c:\temp\pagelist.csv");
+      public FileInfo PageListFileInfo { get; set; } = new FileInfo(@"c:\code\pagelist.csv");
 
       /// <summary>
       /// Gets or sets the content types file
       /// </summary>
-      public FileInfo ContentTypeFileInfo { get; set; } = new FileInfo(@"c:\temp\contenttypes.csv");
+      public FileInfo ContentTypeFileInfo { get; set; } = new FileInfo(@"c:\code\contenttypes.csv");
 
       /// <summary>
       ///  Gets or sets whether supplemental content should be included in the build
@@ -69,7 +69,7 @@ namespace TextTools.CommandHandlers
       /// </summary>
       public List<PageListEntry> Pages { get; set; } = [];
 
-      private DirectoryInfo ContentDirectory { get; set; } = new DirectoryInfo(@"c:\temp");
+      private DirectoryInfo ContentDirectory { get; set; } = new DirectoryInfo(@"c:\code");
 
       /// <inheritdoc />
       protected override bool ValidateNonCoreOptions()
@@ -123,7 +123,7 @@ namespace TextTools.CommandHandlers
       private void BuildNavbarSection(DirectoryInfo ContentDirectory, Worksheet fileReport, IEnumerable<PageListEntry> pages)
       {
          var rootEntries = new List<NavbarEntry>();
-         foreach (var p in pages.OrderBy(p => p.Weight))
+         foreach (var p in pages.OrderBy(p => p.DocOrder))
          {
             // if doc is level2 or deeper, path is level1 parent + navtitle
             string relativePath = string.Empty;
@@ -251,7 +251,7 @@ namespace TextTools.CommandHandlers
 
       private void BuildPageSection(DirectoryInfo ContentDirectory, Worksheet fileReport, IEnumerable<PageListEntry> pages, string navRootDirectory)
       {
-         foreach (var p in pages.OrderBy(p => p.Weight))
+         foreach (var p in pages.OrderBy(p => p.DocOrder))
          {
             string pageText = GeneratePageContents(p, navRootDirectory);
             FileInfo pageFile = GetFileLocation(p, ContentDirectory);
@@ -279,7 +279,7 @@ namespace TextTools.CommandHandlers
                SendToConsole(ex.ToString(), ConsoleColor.Red);
             }
 
-            fileReport.Rows.Add([p.Weight.ToString(), pageFile.FullName, p.Title]);
+            fileReport.Rows.Add([p.DocOrder.ToString(), pageFile.FullName, p.Title]);
          }
       }
 
@@ -323,7 +323,6 @@ namespace TextTools.CommandHandlers
                   continue;
                }
 
-               pl.Weight = Pages.Count + (pl.ContentRole == "Supportive content" ? 1000 : 0);
                Pages.Add(pl);
             }
          }

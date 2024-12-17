@@ -46,12 +46,12 @@ namespace TextTools.CommandHandlers
       /// <summary>
       /// Gets or sets the page list file
       /// </summary>
-      public FileInfo PageListFileInfo { get; set; } = new FileInfo(@"c:\temp\pagelist.csv");
+      public FileInfo PageListFileInfo { get; set; } = new FileInfo(@"c:\code\pagelist.csv");
 
       /// <summary>
       /// Gets or sets the content types file
       /// </summary>
-      public FileInfo ContentTypeFileInfo { get; set; } = new FileInfo(@"c:\temp\contenttypes.csv");
+      public FileInfo ContentTypeFileInfo { get; set; } = new FileInfo(@"c:\code\contenttypes.csv");
 
       /// <summary>
       ///  Gets or sets whether supplemental content should be included in the build
@@ -81,7 +81,7 @@ namespace TextTools.CommandHandlers
       /// <summary>
       /// Gets or sets the current version number of the site
       /// </summary>
-      public string VersionNumber { get; init; } = "v3.0b1";
+      public string VersionNumber { get; init; } = "v3.0";
 
       /// <summary>
       /// Gets or sets a list of all defined content types.
@@ -93,7 +93,7 @@ namespace TextTools.CommandHandlers
       /// </summary>
       public List<PageListEntry> Pages { get; set; } = [];
 
-      private DirectoryInfo ContentDirectory { get; set; } = new DirectoryInfo(@"c:\temp");
+      private DirectoryInfo ContentDirectory { get; set; } = new DirectoryInfo(@"c:\code");
 
       private readonly string FeedbackFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdwubXc5pUELg1L5B7qKjyS1_vnfB-2kALIAJOqwoUQjVUHBA/viewform?usp=pp_url&entry.276608427=ID&entry.395545573=PAGE_URL&entry.549860695=VERSION_NUMBER";
 
@@ -156,7 +156,7 @@ namespace TextTools.CommandHandlers
 
       private void BuildPageSection(DirectoryInfo ContentDirectory, Worksheet fileReport, IEnumerable<PageListEntry> pages, string navRootDirectory)
       {
-         foreach (var p in pages.OrderBy(p => p.Weight))
+         foreach (var p in pages.OrderBy(p => p.DocOrder))
          {
             string pageText = GeneratePageContents(p, navRootDirectory);
             FileInfo pageFile = p.GetAbsolutePageFilePath(ContentDirectory, navRootDirectory);
@@ -184,7 +184,7 @@ namespace TextTools.CommandHandlers
                SendToConsole(ex.ToString(), ConsoleColor.Red);
             }
 
-            fileReport.Rows.Add([p.Weight.ToString(), pageFile.FullName, p.Title]);
+            fileReport.Rows.Add([p.DocOrder.ToString(), pageFile.FullName, p.Title]);
          }
       }
 
@@ -218,7 +218,8 @@ namespace TextTools.CommandHandlers
                   continue;
                }
 
-               pl.Weight = Pages.Count + (pl.ContentRole == "Supportive content" ? 1000 : 0);
+               //pl.Weight = pl.DocOrder;
+               //pl.Weight = Pages.Count + (pl.ContentRole == "Supportive content" ? 1000 : 0);
                Pages.Add(pl);
             }
          }
@@ -242,7 +243,7 @@ namespace TextTools.CommandHandlers
          {
             ContentRole = "Main content",
             Title = MainContentStub,
-            Weight = 1,
+            DocOrder = 1,
             DocDescription = "This area contains the main content of the site typically found in the main navigation of the DevDocs site.",
             InPhase1 = "yes",
             ContentType = "Not applicable"
@@ -255,7 +256,7 @@ namespace TextTools.CommandHandlers
          {
             ContentRole = "Supportive content",
             Title = SupplementalContentStub,
-            Weight = 1000,
+            DocOrder = 1000,
             DocDescription = "This area contains secondary content typically not found in the main navigation of the DevDocs site.",
             InPhase1 = "yes",
             ContentType = "Not applicable"
@@ -281,7 +282,7 @@ namespace TextTools.CommandHandlers
          contents.AppendLine("+++");
          contents.AppendLine($"title = '{p.GetNavTitle().Replace("'", "’")}'");
          contents.AppendLine($"date = {DateTime.Now.ToLongTimeString()}");
-         contents.AppendLine($"weight = {p.Weight}");
+         contents.AppendLine($"weight = {p.DocOrder}");
          contents.AppendLine($"alwaysopen = false");
          contents.AppendLine("+++");
          contents.AppendLine();
